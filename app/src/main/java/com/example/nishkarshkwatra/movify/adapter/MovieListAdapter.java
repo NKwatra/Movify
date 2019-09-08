@@ -103,6 +103,12 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     // Function to swap data set with new data, when new data loads
     public void swapDataset(ArrayList<Movie> newDataset)
     {
-        mMoviesDataset = newDataset;
+        if(mMoviesDataset == null)
+            mMoviesDataset = newDataset;
+        else if(newDataset != null && !mMoviesDataset.containsAll(newDataset))
+            mMoviesDataset.addAll(newDataset);
+        else
+            return;
+        notifyDataSetChanged();
     }
 }

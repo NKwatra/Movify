@@ -1,5 +1,7 @@
 package com.example.nishkarshkwatra.movify.entity;
 
+import android.support.annotation.Nullable;
+
 public class Movie {
 
     // member variables to store movie data
@@ -29,6 +31,14 @@ public class Movie {
         mMovieSynopsis = synopsis;
     }
 
+    // override equals method to perform a deep equality check
+
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        Movie m = (Movie) obj;
+        return (this.mMovieId == m.getmMovieId());
+    }
 
     //getters
     public String getmMoviePoster() {

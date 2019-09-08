@@ -44,6 +44,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     private int mLoaderId;
     private String mPath;
     private MovieListAdapter mMovieListAdapter;
+    private int mPageNo;
 
     public MoviesListFragment()
     {
@@ -69,15 +70,20 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         // obtain the parameters for loader and path
         mLoaderId = arguments.getInt(LOADER_ID_CODE);
         mPath = arguments.getString(PATH_CODE);
-
-        Log.d(LOG_TAG, "on Create" + this.toString());
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        Log.d(LOG_TAG, "on Create View" + this.toString());
+
+        if(savedInstanceState != null)
+        {
+            mPageNo = savedInstanceState.getInt(PAGE_CODE);
+        }else
+        {
+            mPageNo = 0;
+        }
 
         // Inflate the root layout for the fragment
         View fragmentRoot = inflater.inflate(R.layout.movie_list_fragment, container, false);
@@ -95,11 +101,9 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        Log.d(LOG_TAG, "on Activity Created" + this.toString());
         // start loading the data in fragment once the parent activity has been created
-
         Bundle bundle = new Bundle();
-        bundle.putInt(PAGE_CODE, 1);
+        bundle.putInt(PAGE_CODE, ++mPageNo);
 
         getActivity().getSupportLoaderManager().initLoader(mLoaderId, bundle, this);
 
@@ -117,6 +121,24 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         // hook up recycler view to adapter
         mMovieListAdapter = new MovieListAdapter(this);
         mMoviesListRecyclerView.setAdapter(mMovieListAdapter);
+
+        // register scroll listener on recycler view and load new data whenever user scrolls to the end
+        mMoviesListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+
+                // check if recycler view can scroll vertically, 1 represents downward direction, -1 upward
+                if(!recyclerView.canScrollVertically(1))
+                {
+                    Bundle bundle = new Bundle();
+                    bundle.putInt(PAGE_CODE, ++mPageNo);
+                    if(mPageNo > 1000)
+                        return;
+                    getActivity().getSupportLoaderManager().restartLoader(mLoaderId, bundle, MoviesListFragment.this);
+                }
+            }
+        });
     }
 
     @NonNull
@@ -138,44 +160,25 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         }
         // update the adapter with newly fetched data
         mMovieListAdapter.swapDataset(response);
-        mMovieListAdapter.notifyDataSetChanged();
         // Hide the loading indicator
         mMoviesLoadingProgressBar.setVisibility(View.INVISIBLE);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<String> loader) {
-        Toast.makeText(getContext(), "Loader reset" + loader.getId(), Toast.LENGTH_LONG).show();
 
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(LOG_TAG, "on Pause" + this.toString());
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(LOG_TAG, "on stop" + this.toString());
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(LOG_TAG, "on Destroy View"  + this.toString() );
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(LOG_TAG, "on Destroy" + this.toString());
     }
 
     @Override
     public void onItemClick(Movie movie) {
         Intent startDetailsActivity = new Intent(getContext(), DetailsActivity.class);
         startActivity(startDetailsActivity);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // save the page no to be loaded in the instance state
+        outState.putInt(PAGE_CODE, mPageNo);
     }
 }

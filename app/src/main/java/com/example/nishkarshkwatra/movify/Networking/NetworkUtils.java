@@ -34,6 +34,8 @@ public class NetworkUtils {
                 .appendQueryParameter(PARAM_PAGE, ""+ pageNo)
                 .build();
 
+        Log.d("Network Utils", sourceUri.toString());
+
         // convert the uri to url
         URL dataUrl = null;
         try {
@@ -42,7 +44,6 @@ public class NetworkUtils {
         {
             e.printStackTrace();
         }finally {
-            Log.d("Network Utils", sourceUri.toString());
             return dataUrl;
         }
     }

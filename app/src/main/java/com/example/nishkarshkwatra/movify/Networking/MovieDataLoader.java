@@ -52,4 +52,9 @@ public class MovieDataLoader extends AsyncTaskLoader<String> {
         mResultCache = data;
         super.deliverResult(data);
     }
+
+    public int getPageNo()
+    {
+        return mPageNo;
+    }
 }
