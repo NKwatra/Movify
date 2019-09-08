@@ -43,6 +43,7 @@ public class NetworkUtils {
         {
             e.printStackTrace();
         }finally {
+            Log.d("Network Utils", sourceUri.toString());
             return dataUrl;
         }
     }

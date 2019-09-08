@@ -23,6 +23,9 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     public static final String LOADER_ID_CODE = "loader";
     public static final String PATH_CODE = "path";
 
+    // define log tag
+    public static final String LOG_TAG = "MoviesListFragment";
+
     // define members to store references and keys
     private RecyclerView mMoviesListRecyclerView;
     private ProgressBar mMoviesLoadingProgressBar;
@@ -54,11 +57,14 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         mLoaderId = arguments.getInt(LOADER_ID_CODE);
         mPath = arguments.getString(PATH_CODE);
 
+        Log.d(LOG_TAG, "on Create" + this.toString());
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        Log.d(LOG_TAG, "on Create View" + this.toString());
 
         // Inflate the root layout for the fragment
         View fragmentRoot = inflater.inflate(R.layout.movie_list_fragment, container, false);
@@ -69,11 +75,13 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
 
         // Return the root layout of the fragment
         return fragmentRoot;
+
     }
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        Log.d(LOG_TAG, "on Activity Created" + this.toString());
         getActivity().getSupportLoaderManager().initLoader(mLoaderId, null, this);
     }
 
@@ -92,6 +100,31 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoaderReset(@NonNull Loader<String> loader) {
+        Toast.makeText(getContext(), "Loader reset" + loader.getId(), Toast.LENGTH_LONG).show();
 
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(LOG_TAG, "on Pause" + this.toString());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.d(LOG_TAG, "on stop" + this.toString());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        Log.d(LOG_TAG, "on Destroy View"  + this.toString() );
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.d(LOG_TAG, "on Destroy" + this.toString());
     }
 }
