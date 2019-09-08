@@ -2,6 +2,7 @@ package com.example.nishkarshkwatra.movify.adapter;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +18,21 @@ import java.util.Arrays;
 
 public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieHolder> {
 
+    // define interface for click events
+    public interface onItemClickHandler
+    {
+        void onItemClick(Movie movie);
+    }
+
     // member variable for data source of the adapter
     private ArrayList<Movie> mMoviesDataset;
+    private static onItemClickHandler mItemClickHandler;
 
     // Base Url for loading images
     public static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/original/";
 
     // View holder class
-    public static class MovieHolder extends RecyclerView.ViewHolder{
+    public  class MovieHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         // member variables to catch reference to component views
         private ImageView mMoviePoster;
@@ -38,7 +46,18 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             mMoviePoster = (ImageView)view.findViewById(R.id.iv_movie_poster);
             mMovieName = (TextView) view.findViewById(R.id.tv_movie_name);
             mMovieGenres = (TextView) view.findViewById(R.id.tv_movie_genres);
+            view.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            mItemClickHandler.onItemClick(mMoviesDataset.get(getAdapterPosition()));
+        }
+    }
+
+    public MovieListAdapter(onItemClickHandler handler)
+    {
+        mItemClickHandler = handler;
     }
 
     // Inflate the layout for each view holder
@@ -66,6 +85,8 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         // set the movie name and genres for given list item
         movieHolder.mMovieName.setText(currentMovie.getmMovieName());
         movieHolder.mMovieGenres.setText(Arrays.toString(currentMovie.getmMovieGenres()));
+
+        Log.d("MovieListAdapter", this.toString());
     }
 
     // Return the number of items in the list

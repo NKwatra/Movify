@@ -1,5 +1,6 @@
 package com.example.nishkarshkwatra.movify.UI;
 
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import com.example.nishkarshkwatra.movify.DetailsActivity;
 import com.example.nishkarshkwatra.movify.Networking.MovieDataLoader;
 import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.adapter.MovieListAdapter;
@@ -26,7 +28,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class MoviesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<String> {
+public class MoviesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<String>, MovieListAdapter.onItemClickHandler {
 
     // define constants for keys to be used in bundle
     public static final String LOADER_ID_CODE = "loader";
@@ -40,7 +42,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     private ProgressBar mMoviesLoadingProgressBar;
     private int mLoaderId;
     private String mPath;
-    MovieListAdapter mMovieListAdapter;
+    private MovieListAdapter mMovieListAdapter;
 
     public MoviesListFragment()
     {
@@ -83,20 +85,6 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         mMoviesListRecyclerView = (RecyclerView) fragmentRoot.findViewById(R.id.rv_movies_holder);
         mMoviesLoadingProgressBar = (ProgressBar) fragmentRoot.findViewById(R.id.pb_movies_loading);
 
-        // hook up recycler view to a grid layout
-        // create 2 column grid in portrait mode and 4 column in landscape mode
-        if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-        {
-            mMoviesListRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        }else
-        {
-            mMoviesListRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
-        }
-
-
-        // hook up recycler view to adapter
-        mMovieListAdapter = new MovieListAdapter();
-        mMoviesListRecyclerView.setAdapter(mMovieListAdapter);
 
         // Return the root layout of the fragment
         return fragmentRoot;
@@ -109,6 +97,21 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         Log.d(LOG_TAG, "on Activity Created" + this.toString());
         // start loading the data in fragment once the parent activity has been created
         getActivity().getSupportLoaderManager().initLoader(mLoaderId, null, this);
+
+        // hook up recycler view to a grid layout
+        // create 2 column grid in portrait mode and 4 column in landscape mode
+        if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
+            mMoviesListRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        }else
+        {
+            mMoviesListRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        }
+
+
+        // hook up recycler view to adapter
+        mMovieListAdapter = new MovieListAdapter(this);
+        mMoviesListRecyclerView.setAdapter(mMovieListAdapter);
     }
 
     @NonNull
@@ -163,5 +166,11 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     public void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG, "on Destroy" + this.toString());
+    }
+
+    @Override
+    public void onItemClick(Movie movie) {
+        Intent startDetailsActivity = new Intent(getContext(), DetailsActivity.class);
+        startActivity(startDetailsActivity);
     }
 }
