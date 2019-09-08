@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.entity.Movie;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +19,9 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     // member variable for data source of the adapter
     private ArrayList<Movie> mMoviesDataset;
+
+    // Base Url for loading images
+    public static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/original/";
 
     // View holder class
     public static class MovieHolder extends RecyclerView.ViewHolder{
@@ -57,7 +61,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
         Movie currentMovie = mMoviesDataset.get(position);
 
         // Load image using picasso library
-        Picasso.get().load(currentMovie.getmMoviePoster()).into(movieHolder.mMoviePoster);
+        Picasso.get().load(BASE_IMAGE_URL + currentMovie.getmMoviePoster()).into(movieHolder.mMoviePoster);
 
         // set the movie name and genres for given list item
         movieHolder.mMovieName.setText(currentMovie.getmMovieName());
