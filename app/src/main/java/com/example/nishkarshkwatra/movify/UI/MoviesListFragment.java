@@ -36,6 +36,7 @@ public class MoviesListFragment extends Fragment {
         Bundle args = new Bundle();
         args.putInt(LOADER_ID_CODE, loaderId);
         args.putString(PATH_CODE, path);
+        fragment.setArguments(args);
         return fragment;
     }
 

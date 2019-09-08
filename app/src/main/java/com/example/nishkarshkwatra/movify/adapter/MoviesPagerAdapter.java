@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
 import com.example.nishkarshkwatra.movify.R;
+import com.example.nishkarshkwatra.movify.UI.GenreListFragment;
 import com.example.nishkarshkwatra.movify.UI.MoviesListFragment;
 
 public class MoviesPagerAdapter extends FragmentPagerAdapter {
@@ -32,9 +33,10 @@ public class MoviesPagerAdapter extends FragmentPagerAdapter {
         // return appropriate fragment instance depending on the tab
         switch (position)
         {
-            case 0: return null;
+            case 0: return new GenreListFragment();
             case 1: return MoviesListFragment.newInstance(TRENDING_LOADER_ID, TRENDING_PATH);
             case 2: return MoviesListFragment.newInstance(TOP_RATED_LOADER_ID, TOP_RATED_PATH);
+            default: return null;
         }
     }
 
