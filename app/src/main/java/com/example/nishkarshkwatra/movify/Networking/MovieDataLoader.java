@@ -8,19 +8,22 @@ import android.widget.ProgressBar;
 
 public class MovieDataLoader extends AsyncTaskLoader<String> {
 
+    // member variables to store state of loader
     private String mPath;
     private String mResultCache;
     private ProgressBar mLoadingIndicator;
+    private int mPageNo;
 
     // Constructor
     // @Param path: The path of request url to query
     // @Param context: A context object(activity) to which loader needs to be associated
     // @Param loadingIndicator: a progress bar to show when loading data
-    public MovieDataLoader(String path, Context context, ProgressBar loadingIndicator)
+    public MovieDataLoader(String path, Context context, ProgressBar loadingIndicator, int pageNo)
     {
         super(context);
         mPath = path;
         mLoadingIndicator = loadingIndicator;
+        mPageNo = pageNo;
     }
 
 
@@ -40,7 +43,7 @@ public class MovieDataLoader extends AsyncTaskLoader<String> {
     @Override
     public String loadInBackground() {
         // Return the raw JSON response from the API.
-        return NetworkUtils.getHttpsResponse(mPath);
+        return NetworkUtils.getHttpsResponse(mPath, mPageNo);
     }
 
     @Override

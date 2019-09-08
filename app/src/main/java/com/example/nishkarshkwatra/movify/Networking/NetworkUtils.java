@@ -20,19 +20,18 @@ public class NetworkUtils {
     public static final String PARAM_LANGUAGE = "language";
     public static final String PARAM_PAGE = "page";
     public static final String VALUE_LANGUAGE = "en-US";
-    public static final String VALUE_PAGE = "1";
 
     // method to create desired url for given path
     // @Param path : The path segment of api which needs to be queried
     // Eg movie/popular, movie/top_rated etc.
-    public static URL createDataUrl(String path)
+    public static URL createDataUrl(String path, int pageNo)
     {
         // Build a uri with path and query params
         Uri sourceUri = Uri.parse(BASE_URL + path)
                 .buildUpon()
                 .appendQueryParameter(PARAM_API_KEY, BuildConfig.API_KEY)
                 .appendQueryParameter(PARAM_LANGUAGE, VALUE_LANGUAGE)
-                .appendQueryParameter(PARAM_PAGE, VALUE_PAGE)
+                .appendQueryParameter(PARAM_PAGE, ""+ pageNo)
                 .build();
 
         // convert the uri to url
@@ -49,10 +48,10 @@ public class NetworkUtils {
     }
 
     // method to fetch response from the TmDb api
-    public static String getHttpsResponse(String path)
+    public static String getHttpsResponse(String path, int pageNo)
     {
         // query the given url for data
-        URL dataURL = createDataUrl(path);
+        URL dataURL = createDataUrl(path, pageNo);
         HttpsURLConnection connection = null;
         String response = null;
         try

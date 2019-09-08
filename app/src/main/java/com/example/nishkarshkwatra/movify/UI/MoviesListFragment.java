@@ -33,6 +33,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     // define constants for keys to be used in bundle
     public static final String LOADER_ID_CODE = "loader";
     public static final String PATH_CODE = "path";
+    public static final String PAGE_CODE = "page";
 
     // define log tag
     public static final String LOG_TAG = "MoviesListFragment";
@@ -96,7 +97,11 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         super.onActivityCreated(savedInstanceState);
         Log.d(LOG_TAG, "on Activity Created" + this.toString());
         // start loading the data in fragment once the parent activity has been created
-        getActivity().getSupportLoaderManager().initLoader(mLoaderId, null, this);
+
+        Bundle bundle = new Bundle();
+        bundle.putInt(PAGE_CODE, 1);
+
+        getActivity().getSupportLoaderManager().initLoader(mLoaderId, bundle, this);
 
         // hook up recycler view to a grid layout
         // create 2 column grid in portrait mode and 4 column in landscape mode
@@ -117,7 +122,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     @NonNull
     @Override
     public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
-        return new MovieDataLoader(mPath, getContext(), mMoviesLoadingProgressBar);
+        return new MovieDataLoader(mPath, getContext(), mMoviesLoadingProgressBar, bundle.getInt(PAGE_CODE));
     }
 
     @Override
