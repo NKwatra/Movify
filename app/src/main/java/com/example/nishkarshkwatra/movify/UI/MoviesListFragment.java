@@ -14,12 +14,40 @@ import com.example.nishkarshkwatra.movify.R;
 
 public class MoviesListFragment extends Fragment {
 
+    // define constants for keys to be used in bundle
+    public static final String LOADER_ID_CODE = "loader";
+    public static final String PATH_CODE = "path";
+
+    // define members to store references and keys
     private RecyclerView mMoviesListRecyclerView;
     private ProgressBar mMoviesLoadingProgressBar;
+    private int mLoaderId;
+    private String mPath;
 
     public MoviesListFragment()
     {
         // Empty constructor for super class
+    }
+
+    // factory method to create a new instance of fragment
+    public static MoviesListFragment newInstance(int loaderId, String path)
+    {
+        MoviesListFragment fragment = new MoviesListFragment();
+        Bundle args = new Bundle();
+        args.putInt(LOADER_ID_CODE, loaderId);
+        args.putString(PATH_CODE, path);
+        return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle arguments = getArguments();
+
+        // obtain the parameters for loader and path
+        mLoaderId = arguments.getInt(LOADER_ID_CODE);
+        mPath = arguments.getString(PATH_CODE);
+
     }
 
     @Nullable

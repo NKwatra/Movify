@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Movify</string>
+
+     <!--string resources for view pager headers -->
+    <string name="movies_classification_genre">GENRE</string>
+    <string name="movies_classification_trending">TRENDING</string>
+    <string name="movies_classification_top_rated">TOP RATED</string>
 </resources>
