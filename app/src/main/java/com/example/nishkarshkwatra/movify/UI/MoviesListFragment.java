@@ -16,6 +16,12 @@ import android.widget.Toast;
 
 import com.example.nishkarshkwatra.movify.Networking.MovieDataLoader;
 import com.example.nishkarshkwatra.movify.R;
+import com.example.nishkarshkwatra.movify.data.JsonUtils;
+import com.example.nishkarshkwatra.movify.entity.Movie;
+
+import org.json.JSONException;
+
+import java.util.ArrayList;
 
 public class MoviesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<String> {
 
@@ -93,9 +99,15 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String s) {
-        Log.d("Movies List Fragment", s);
+        ArrayList<Movie> response =null;
+        try
+        {
+            response = JsonUtils.getMoviesList(s);
+        }catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
         mMoviesLoadingProgressBar.setVisibility(View.INVISIBLE);
-        Toast.makeText(getContext(), "Data loading completed", Toast.LENGTH_SHORT).show();
     }
 
     @Override
