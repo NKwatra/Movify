@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,14 +15,19 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.nishkarshkwatra.movify.BuildConfig;
+import com.example.nishkarshkwatra.movify.Networking.MovieDataLoader;
 import com.example.nishkarshkwatra.movify.R;
+import com.example.nishkarshkwatra.movify.data.JsonUtils;
 import com.example.nishkarshkwatra.movify.entity.Movie;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
+
+import org.json.JSONException;
 
 public class MovieDetailsFragment extends Fragment implements YouTubePlayer.PlaybackEventListener {
 
@@ -30,6 +37,9 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
     public static final String MOVIE_RATING_KEY = "rating";
     public static final String MOVIE_DESCRIPTION_KEY = "synopsis";
     public static final String MOVIE_ID_KEY = "id";
+
+    // constants for loader ids
+    public static final int VIDEO_LOADER_ID = 10000;
 
     // member variables to store references
     private YouTubePlayerSupportFragment mMovieTrailer;
@@ -88,22 +98,65 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
         // store movie id value
         mMovieId = arguments.getInt(MOVIE_ID_KEY);
 
-        // initialize the youtube player
-        mMovieTrailer.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
-            @Override
-            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
-                // set playback event listener on youtube player
-                youTubePlayer.setPlaybackEventListener(MovieDetailsFragment.this);
-                youTubePlayer.cueVideo("OIdOFo7b2pA");
-            }
-
-            @Override
-            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
-
-            }
-        });
 
         return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // define callbacks for videos of the movie
+        LoaderManager.LoaderCallbacks<String> videoCallbacks = new LoaderManager.LoaderCallbacks<String>() {
+            @NonNull
+            @Override
+            public Loader<String> onCreateLoader(int loaderId, @Nullable Bundle bundle) {
+                return new MovieDataLoader(bundle.getString(MoviesListFragment.PATH_CODE), getContext(), null, 1);
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<String> loader, String result) {
+                 String video = null;
+                try
+                {
+                    video = JsonUtils.getMovieVideo(result);
+                }catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+                if(video != null)
+                {
+                    final String videoToBeLoaded = video;
+                    // initialize the youtube player
+                    mMovieTrailer.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+                        @Override
+                        public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                            // set playback event listener on youtube player
+                            youTubePlayer.setPlaybackEventListener(MovieDetailsFragment.this);
+                            youTubePlayer.cueVideo(videoToBeLoaded);
+                        }
+
+                        @Override
+                        public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+
+                        }
+                    });
+                }else
+                {
+                    Toast.makeText(getContext(), "No video found for this movie", Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<String> loader) {
+
+            }
+        };
+
+        Bundle videoBundle = new Bundle();
+        videoBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/videos");
+        getActivity().getSupportLoaderManager().initLoader(VIDEO_LOADER_ID, videoBundle, videoCallbacks);
     }
 
     @Override

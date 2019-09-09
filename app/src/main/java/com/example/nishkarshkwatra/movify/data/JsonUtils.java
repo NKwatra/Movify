@@ -36,4 +36,27 @@ public class JsonUtils {
         }
         return response;
     }
+
+    public static String getMovieVideo(String rawJson) throws JSONException
+    {
+        // parse json response to search for video of type Trailer
+        JSONObject root = new JSONObject(rawJson);
+        JSONArray results = root.getJSONArray("results");
+        String response = null;
+        for(int i=0; i<results.length(); i++)
+        {
+            JSONObject currObject = results.getJSONObject(i);
+            if(currObject.getString("type").equals("Trailer"))
+            {
+                return currObject.getString("key");
+            }
+        }
+
+        // If no trailer found, return any video associated with movie
+        if(response ==null && results.length() > 1)
+            return results.getJSONObject(0).getString("key");
+
+        // if no video found return null
+        return null;
+    }
 }

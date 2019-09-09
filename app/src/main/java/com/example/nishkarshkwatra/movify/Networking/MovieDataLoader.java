@@ -31,7 +31,8 @@ public class MovieDataLoader extends AsyncTaskLoader<String> {
     protected void onStartLoading() {
         super.onStartLoading();
         // show the progress bar when loading begins
-        mLoadingIndicator.setVisibility(View.VISIBLE);
+        if(mLoadingIndicator != null)
+            mLoadingIndicator.setVisibility(View.VISIBLE);
 
         // directly deliver the result if loader has cached result else force a load
         if(mResultCache != null)
