@@ -1,6 +1,6 @@
 package com.example.nishkarshkwatra.movify.UI;
 
-import android.content.res.Configuration;
+
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,22 +14,26 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
+
 
 import com.example.nishkarshkwatra.movify.BuildConfig;
 import com.example.nishkarshkwatra.movify.Networking.MovieDataLoader;
 import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.adapter.CastListAdapter;
 import com.example.nishkarshkwatra.movify.data.JsonUtils;
+import com.example.nishkarshkwatra.movify.entity.Cast;
 import com.example.nishkarshkwatra.movify.entity.Movie;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
 import org.json.JSONException;
+
+import java.util.ArrayList;
 
 public class MovieDetailsFragment extends Fragment implements YouTubePlayer.PlaybackEventListener {
 
@@ -42,6 +46,7 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
 
     // constants for loader ids
     public static final int VIDEO_LOADER_ID = 10000;
+    public static final int CAST_LOADER_ID = 10001;
 
     // member variables to store references
     private YouTubePlayerSupportFragment mMovieTrailer;
@@ -54,6 +59,7 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
     private RecyclerView mMovieSimilar;
     private RecyclerView mMovieReviews;
     private int mMovieId;
+    private ProgressBar mCastLoading;
 
     // empty constructor for super class
     public MovieDetailsFragment(){}
@@ -87,6 +93,7 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
         mMovieCast = (RecyclerView) view.findViewById(R.id.rv_movie_detail_cast);
         mMovieSimilar = (RecyclerView) view.findViewById(R.id.rv_movie_detail_similar_movies);
         mMovieReviews = (RecyclerView) view.findViewById(R.id.rv_movie_detail_reviews);
+        mCastLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_cast_loading);
 
         // fetch values of arguments
         Bundle arguments = getArguments();
@@ -150,12 +157,45 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
 
                 // hook up the cast list recycler view with a layout manager and adapter
                 mMovieCast.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-                CastListAdapter castAdapter = new CastListAdapter();
+                final CastListAdapter castAdapter = new CastListAdapter();
                 mMovieCast.setAdapter(castAdapter);
 
                 // set up for perfomance optimization in recycler view
                 mMovieCast.setHasFixedSize(true);
 
+
+                // define callbacks for loader which loads cast data
+                LoaderManager.LoaderCallbacks<String> castCallbacks = new LoaderManager.LoaderCallbacks<String>() {
+                    @NonNull
+                    @Override
+                    public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
+                        return new MovieDataLoader(bundle.getString(MoviesListFragment.PATH_CODE), getContext(),mCastLoading, 1);
+                    }
+
+                    @Override
+                    public void onLoadFinished(@NonNull Loader<String> loader, String s) {
+                        ArrayList<Cast> castList = null;
+                        try
+                        {
+                            castList = JsonUtils.getCastList(s);
+                        }catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        mCastLoading.setVisibility(View.INVISIBLE);
+                        castAdapter.swapDataset(castList);
+                    }
+
+                    @Override
+                    public void onLoaderReset(@NonNull Loader<String> loader) {
+
+                    }
+                };
+
+                Bundle castBundle = new Bundle();
+                castBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/credits");
+
+                getActivity().getSupportLoaderManager().initLoader(CAST_LOADER_ID, castBundle, castCallbacks);
 
             }
 

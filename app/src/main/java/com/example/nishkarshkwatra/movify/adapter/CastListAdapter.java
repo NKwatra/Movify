@@ -70,6 +70,7 @@ public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.CastHo
     public void swapDataset(ArrayList<Cast> newSource)
     {
         mCastDataSet = newSource;
+        notifyDataSetChanged();
     }
 
 

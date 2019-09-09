@@ -1,5 +1,6 @@
 package com.example.nishkarshkwatra.movify.data;
 
+import com.example.nishkarshkwatra.movify.entity.Cast;
 import com.example.nishkarshkwatra.movify.entity.Movie;
 
 import org.json.JSONArray;
@@ -58,5 +59,23 @@ public class JsonUtils {
 
         // if no video found return null
         return null;
+    }
+
+    public static ArrayList<Cast> getCastList(String rawJson) throws JSONException
+    {
+        JSONObject root = new JSONObject(rawJson);
+        JSONArray cast = root.getJSONArray("cast");
+        ArrayList<Cast> response = new ArrayList<>();
+        for(int i=0; i< Math.min(10, cast.length()); i++)
+        {
+            JSONObject currentCastObject = cast.getJSONObject(i);
+            String name= currentCastObject.getString("name");
+            int id = currentCastObject.getInt("id");
+            String profile = currentCastObject.getString("profile_path");
+            if(profile != null)
+                profile = profile.replace("/", "");
+            response.add(new Cast(profile, name, id));
+        }
+        return response;
     }
 }
