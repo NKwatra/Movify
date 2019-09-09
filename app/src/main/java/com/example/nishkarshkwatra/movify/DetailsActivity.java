@@ -14,25 +14,30 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
-        // get intent that started this activity
-        Intent activityStartIntent = getIntent();
+        // during orientation changes, a fragment is destroyed, but the system automatically creates a new
+        // instance of the fragment and attaches it to parent activity, so manually attach fragment only if the
+        // parent activity is created for the first time, else use the fragment attached by system automatically
+        if(savedInstanceState == null) {
+            // get intent that started this activity
+            Intent activityStartIntent = getIntent();
 
-        // extract movie parameters from the intent
-        String name = activityStartIntent.getStringExtra(MovieDetailsFragment.MOVIE_NAME_KEY);
-        String year = activityStartIntent.getStringExtra(MovieDetailsFragment.MOVIE_YEAR_KEY);
-        String description = activityStartIntent.getStringExtra(MovieDetailsFragment.MOVIE_DESCRIPTION_KEY);
-        double rating = activityStartIntent.getDoubleExtra(MovieDetailsFragment.MOVIE_RATING_KEY, 5.0);
-        int id = activityStartIntent.getIntExtra(MovieDetailsFragment.MOVIE_ID_KEY, 1);
+            // extract movie parameters from the intent
+            String name = activityStartIntent.getStringExtra(MovieDetailsFragment.MOVIE_NAME_KEY);
+            String year = activityStartIntent.getStringExtra(MovieDetailsFragment.MOVIE_YEAR_KEY);
+            String description = activityStartIntent.getStringExtra(MovieDetailsFragment.MOVIE_DESCRIPTION_KEY);
+            double rating = activityStartIntent.getDoubleExtra(MovieDetailsFragment.MOVIE_RATING_KEY, 5.0);
+            int id = activityStartIntent.getIntExtra(MovieDetailsFragment.MOVIE_ID_KEY, 1);
 
-        // create a new movie instance
-        Movie movie = new Movie(null, name, null, id, rating, description, year);
+            // create a new movie instance
+            Movie movie = new Movie(null, name, null, id, rating, description, year);
 
-        // create a fragment to be attached to the details activity
-        MovieDetailsFragment fragment = MovieDetailsFragment.newInstance(movie);
+            // create a fragment to be attached to the details activity
+            MovieDetailsFragment fragment = MovieDetailsFragment.newInstance(movie);
 
-        // attach the detail fragment to detail activity
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fl_detail_fragment_container, fragment)
-                .commit();
+            // attach the detail fragment to detail activity
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fl_detail_fragment_container, fragment)
+                    .commit();
+        }
     }
 }

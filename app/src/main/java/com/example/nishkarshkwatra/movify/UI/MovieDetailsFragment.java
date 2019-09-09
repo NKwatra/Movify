@@ -1,10 +1,12 @@
 package com.example.nishkarshkwatra.movify.UI;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +15,14 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
+import com.example.nishkarshkwatra.movify.BuildConfig;
 import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.entity.Movie;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
-public class MovieDetailsFragment extends Fragment {
+public class MovieDetailsFragment extends Fragment implements YouTubePlayer.PlaybackEventListener {
 
     // constant keys to store movie data
     public static final String MOVIE_NAME_KEY = "name";
@@ -26,7 +32,7 @@ public class MovieDetailsFragment extends Fragment {
     public static final String MOVIE_ID_KEY = "id";
 
     // member variables to store references
-    private VideoView mMovieTrailer;
+    private YouTubePlayerSupportFragment mMovieTrailer;
     private TextView mMovieName;
     private TextView mMovieReleaseYear;
     private RatingBar mMovieAverageRating;
@@ -60,7 +66,7 @@ public class MovieDetailsFragment extends Fragment {
         View view = inflater.inflate(R.layout.movie_detail_fragment, container, false);
 
         // store reference to various views in the layout
-        mMovieTrailer = (VideoView) view.findViewById(R.id.vv_movie_detail_trailer);
+        mMovieTrailer = (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.youtube_player_fragment_movie_detail_trailer);
         mMovieName = (TextView) view.findViewById(R.id.tv_movie_detail_name);
         mMovieAverageRating = (RatingBar) view.findViewById(R.id.rb_movie_detail_rating);
         mMovieReleaseYear = (TextView) view.findViewById(R.id.tv_movie_detail_year);
@@ -82,6 +88,50 @@ public class MovieDetailsFragment extends Fragment {
         // store movie id value
         mMovieId = arguments.getInt(MOVIE_ID_KEY);
 
+        // initialize the youtube player
+        mMovieTrailer.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+            @Override
+            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                // set playback event listener on youtube player
+                youTubePlayer.setPlaybackEventListener(MovieDetailsFragment.this);
+                youTubePlayer.cueVideo("OIdOFo7b2pA");
+            }
+
+            @Override
+            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+
+            }
+        });
+
         return view;
+    }
+
+    @Override
+    public void onPlaying() {
+        // hide the bookmark button while video is being played
+       mMovieBookmarkButton.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onPaused() {
+        // show the bookmark button when the video is paused
+        mMovieBookmarkButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onStopped() {
+        // show bookmark button when video is stopped
+        mMovieBookmarkButton.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onBuffering(boolean b) {
+        // hide bookmark button while video is buffering
+        mMovieBookmarkButton.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onSeekTo(int i) {
+
     }
 }
