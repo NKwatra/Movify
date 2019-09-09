@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +22,7 @@ import android.widget.VideoView;
 import com.example.nishkarshkwatra.movify.BuildConfig;
 import com.example.nishkarshkwatra.movify.Networking.MovieDataLoader;
 import com.example.nishkarshkwatra.movify.R;
+import com.example.nishkarshkwatra.movify.adapter.CastListAdapter;
 import com.example.nishkarshkwatra.movify.data.JsonUtils;
 import com.example.nishkarshkwatra.movify.entity.Movie;
 import com.google.android.youtube.player.YouTubeInitializationResult;
@@ -145,6 +147,15 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
                 {
                     Toast.makeText(getContext(), "No video found for this movie", Toast.LENGTH_LONG).show();
                 }
+
+                // hook up the cast list recycler view with a layout manager and adapter
+                mMovieCast.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                CastListAdapter castAdapter = new CastListAdapter();
+                mMovieCast.setAdapter(castAdapter);
+
+                // set up for perfomance optimization in recycler view
+                mMovieCast.setHasFixedSize(true);
+
 
             }
 
