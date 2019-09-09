@@ -5,4 +5,11 @@
     <string name="movies_classification_genre">GENRE</string>
     <string name="movies_classification_trending">TRENDING</string>
     <string name="movies_classification_top_rated">TOP RATED</string>
+
+    <!-- string resources for detail page -->
+    <string name="header_synopsis">SYNOPSIS</string>
+    <string name="header_cast">CAST</string>
+    <string name="header_similar_movies">SIMILAR MOVIES</string>
+    <string name="header_reviews">REVIEWS</string>
+    <string name="bookmark_content_description">A button to bookmark your favourite movies </string>
 </resources>
