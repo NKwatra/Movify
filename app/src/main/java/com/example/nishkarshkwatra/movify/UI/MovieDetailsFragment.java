@@ -41,7 +41,7 @@ public class MovieDetailsFragment extends Fragment {
     public MovieDetailsFragment(){}
 
     // Factory method to instantiate fragment
-    public MovieDetailsFragment newInstance(Movie movie)
+    public static MovieDetailsFragment newInstance(Movie movie)
     {
         MovieDetailsFragment fragment = new MovieDetailsFragment();
         Bundle args = new Bundle();

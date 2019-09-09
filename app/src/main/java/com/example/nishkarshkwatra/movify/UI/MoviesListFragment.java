@@ -171,7 +171,15 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onItemClick(Movie movie) {
+        // start detail activity on cliking a movie
         Intent startDetailsActivity = new Intent(getContext(), DetailsActivity.class);
+
+        // pass movie attributes to the detail activity
+        startDetailsActivity.putExtra(MovieDetailsFragment.MOVIE_NAME_KEY, movie.getmMovieName());
+        startDetailsActivity.putExtra(MovieDetailsFragment.MOVIE_DESCRIPTION_KEY, movie.getmMovieSynopsis());
+        startDetailsActivity.putExtra(MovieDetailsFragment.MOVIE_YEAR_KEY, movie.getmMovieReleaseYear());
+        startDetailsActivity.putExtra(MovieDetailsFragment.MOVIE_RATING_KEY, movie.getmMovieAverageRating());
+        startDetailsActivity.putExtra(MovieDetailsFragment.MOVIE_ID_KEY, movie.getmMovieId());
         startActivity(startDetailsActivity);
     }
 
