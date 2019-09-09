@@ -35,7 +35,7 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class MovieDetailsFragment extends Fragment implements YouTubePlayer.PlaybackEventListener {
+public class MovieDetailsFragment extends Fragment implements YouTubePlayer.PlaybackEventListener, CastListAdapter.onItemClickListener {
 
     // constant keys to store movie data
     public static final String MOVIE_NAME_KEY = "name";
@@ -157,7 +157,7 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
 
                 // hook up the cast list recycler view with a layout manager and adapter
                 mMovieCast.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-                final CastListAdapter castAdapter = new CastListAdapter();
+                final CastListAdapter castAdapter = new CastListAdapter(MovieDetailsFragment.this);
                 mMovieCast.setAdapter(castAdapter);
 
                 // set up for perfomance optimization in recycler view
@@ -237,5 +237,11 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
     @Override
     public void onSeekTo(int i) {
 
+    }
+
+    @Override
+    public void onItemClick(Cast cast) {
+        CastDetailFragment fragment = CastDetailFragment.newInstance(cast.getmCastId());
+        fragment.show(getActivity().getSupportFragmentManager(), "cast info");
     }
 }

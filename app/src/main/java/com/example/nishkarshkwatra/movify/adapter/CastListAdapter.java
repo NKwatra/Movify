@@ -17,8 +17,22 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.CastHolder> {
 
+    // define interface for click events
+    public interface onItemClickListener{
+        void onItemClick(Cast cast);
+    }
+
     // data set for the adapter
     private ArrayList<Cast> mCastDataSet;
+
+    // click listener reference
+    private onItemClickListener itemClickListener;
+
+    // constructor
+    public CastListAdapter(onItemClickListener listener)
+    {
+        itemClickListener = listener;
+    }
 
     // inflate the layout from xml and return a view holder for each item
     @NonNull
@@ -63,6 +77,14 @@ public class CastListAdapter extends RecyclerView.Adapter<CastListAdapter.CastHo
             // cache the view references
             mCastImageCircleImageView = (CircleImageView) view.findViewById(R.id.iv_movie_detail_cast_image);
             mCastNameTextView = (TextView) view.findViewById(R.id.tv_movie_detail_cast_name);
+
+            // define click listener for view
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    itemClickListener.onItemClick(mCastDataSet.get(getAdapterPosition()));
+                }
+            });
         }
     }
 
