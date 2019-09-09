@@ -1,5 +1,7 @@
 package com.example.nishkarshkwatra.movify.data;
 
+import android.util.Log;
+
 import com.example.nishkarshkwatra.movify.entity.Cast;
 import com.example.nishkarshkwatra.movify.entity.Movie;
 
@@ -76,6 +78,17 @@ public class JsonUtils {
                 profile = profile.replace("/", "");
             response.add(new Cast(profile, name, id));
         }
+        return response;
+    }
+
+    public static String[] getCastDetails(String rawJson) throws JSONException
+    {
+        JSONObject root = new JSONObject(rawJson);
+        String[] response = new String[3];
+        response[0] = root.getString("profile_path").replace("/", "");
+        response[1] = root.getString("name");
+        response[2] = root.getString("biography");
+        Log.d("JsonUtils", response[2]);
         return response;
     }
 }

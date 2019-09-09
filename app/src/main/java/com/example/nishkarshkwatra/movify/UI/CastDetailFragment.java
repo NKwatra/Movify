@@ -1,6 +1,7 @@
 package com.example.nishkarshkwatra.movify.UI;
 
 
+import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,6 +18,11 @@ import android.widget.TextView;
 
 import com.example.nishkarshkwatra.movify.Networking.MovieDataLoader;
 import com.example.nishkarshkwatra.movify.R;
+import com.example.nishkarshkwatra.movify.adapter.MovieListAdapter;
+import com.example.nishkarshkwatra.movify.data.JsonUtils;
+import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -82,8 +88,21 @@ public class CastDetailFragment extends DialogFragment implements LoaderManager.
         Bundle bundle = new Bundle();
         bundle.putString(MoviesListFragment.PATH_CODE, "person/" + mPersonId);
 
-        getActivity().getSupportLoaderManager().initLoader(CAST_DETAIL_LOADER_ID, bundle, this);
+        getActivity().getSupportLoaderManager().restartLoader(CAST_DETAIL_LOADER_ID, bundle, this);
 
+    }
+
+    @Override
+    public void onStart()
+    {
+        super.onStart();
+        Dialog dialog = getDialog();
+        if (dialog != null)
+        {
+            int width = ViewGroup.LayoutParams.MATCH_PARENT;
+            int height = ViewGroup.LayoutParams.MATCH_PARENT;
+            dialog.getWindow().setLayout(width, height);
+        }
     }
 
 
@@ -95,7 +114,20 @@ public class CastDetailFragment extends DialogFragment implements LoaderManager.
 
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String s) {
-        Log.d("CastDetailFragment", s);
+        String[] castDetails = null;
+        try
+        {
+            castDetails = JsonUtils.getCastDetails(s);
+        }catch (JSONException e)
+        {
+            e.printStackTrace();
+        }
+        mCastLoadingProgressBar.setVisibility(View.INVISIBLE);
+        Picasso.get().load(MovieListAdapter.BASE_IMAGE_URL + castDetails[0]).into(mCastImageCircleImageView);
+        mCastNameTextView.setText(castDetails[1]);
+        if(castDetails[2].equals(""))
+            castDetails[2] = "No Information Available";
+        mCastDetailTextView.setText(castDetails[2]);
     }
 
     @Override
