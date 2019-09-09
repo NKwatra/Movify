@@ -11,6 +11,7 @@ public class Movie {
     private int mMovieId;
     private double mMovieAverageRating;
     private String mMovieSynopsis;
+    private String mMovieReleaseYear;
 
 
     /* Constructor
@@ -21,7 +22,7 @@ public class Movie {
      *   @Param avg_rating: The average rating of the movie
      *   @Param synopsis: synopsis of the movie
      */
-    public Movie(String poster, String name, int[] genres, int id, double avg_rating, String synopsis)
+    public Movie(String poster, String name, int[] genres, int id, double avg_rating, String synopsis, String release_year)
     {
         mMoviePoster = poster;
         mMovieName = name;
@@ -29,6 +30,7 @@ public class Movie {
         mMovieId = id;
         mMovieAverageRating = avg_rating;
         mMovieSynopsis = synopsis;
+        mMovieReleaseYear = release_year;
     }
 
     // override equals method to perform a deep equality check
@@ -63,5 +65,9 @@ public class Movie {
 
     public String getmMovieSynopsis() {
         return mMovieSynopsis;
+    }
+
+    public String getmMovieReleaseYear() {
+        return mMovieReleaseYear;
     }
 }

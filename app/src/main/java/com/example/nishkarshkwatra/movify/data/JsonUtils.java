@@ -31,7 +31,8 @@ public class JsonUtils {
             int id = currObject.getInt("id");
             double avg_rating = currObject.getDouble("vote_average");
             String synopsis = currObject.getString("overview");
-            response.add(new Movie(poster, name, genres, id, avg_rating, synopsis));
+            String releaseYear = currObject.getString("release_date").split("-")[0];
+            response.add(new Movie(poster, name, genres, id, avg_rating, synopsis, releaseYear));
         }
         return response;
     }
