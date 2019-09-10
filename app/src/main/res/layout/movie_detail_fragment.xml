@@ -214,10 +214,22 @@
                     android:layout_height="1dp"
                     android:background="@android:color/darker_gray" />
 
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rv_movie_detail_similar_movies"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
+
+                <ProgressBar
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:id="@+id/pb_movie_detail_similar_loading"
+                    android:layout_gravity="center"
+                    android:visibility="invisible" />
+            </FrameLayout>
 
             </LinearLayout>
 

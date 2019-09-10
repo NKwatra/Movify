@@ -24,6 +24,8 @@ import com.example.nishkarshkwatra.movify.BuildConfig;
 import com.example.nishkarshkwatra.movify.Networking.MovieDataLoader;
 import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.adapter.CastListAdapter;
+import com.example.nishkarshkwatra.movify.adapter.MovieListAdapter;
+import com.example.nishkarshkwatra.movify.adapter.SimilarMoviesListAdapter;
 import com.example.nishkarshkwatra.movify.data.JsonUtils;
 import com.example.nishkarshkwatra.movify.entity.Cast;
 import com.example.nishkarshkwatra.movify.entity.Movie;
@@ -47,6 +49,7 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
     // constants for loader ids
     public static final int VIDEO_LOADER_ID = 10000;
     public static final int CAST_LOADER_ID = 10001;
+    public static final int SIMILAR_MOVIES_LOADER_ID = 10002;
 
     // member variables to store references
     private YouTubePlayerSupportFragment mMovieTrailer;
@@ -60,6 +63,7 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
     private RecyclerView mMovieReviews;
     private int mMovieId;
     private ProgressBar mCastLoading;
+    private ProgressBar mSimilarLoading;
 
     // empty constructor for super class
     public MovieDetailsFragment(){}
@@ -94,6 +98,7 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
         mMovieSimilar = (RecyclerView) view.findViewById(R.id.rv_movie_detail_similar_movies);
         mMovieReviews = (RecyclerView) view.findViewById(R.id.rv_movie_detail_reviews);
         mCastLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_cast_loading);
+        mSimilarLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_similar_loading);
 
         // fetch values of arguments
         Bundle arguments = getArguments();
@@ -155,48 +160,6 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
                     Toast.makeText(getContext(), "No video found for this movie", Toast.LENGTH_LONG).show();
                 }
 
-                // hook up the cast list recycler view with a layout manager and adapter
-                mMovieCast.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-                final CastListAdapter castAdapter = new CastListAdapter(MovieDetailsFragment.this);
-                mMovieCast.setAdapter(castAdapter);
-
-                // set up for perfomance optimization in recycler view
-                mMovieCast.setHasFixedSize(true);
-
-
-                // define callbacks for loader which loads cast data
-                LoaderManager.LoaderCallbacks<String> castCallbacks = new LoaderManager.LoaderCallbacks<String>() {
-                    @NonNull
-                    @Override
-                    public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
-                        return new MovieDataLoader(bundle.getString(MoviesListFragment.PATH_CODE), getContext(),mCastLoading, 1);
-                    }
-
-                    @Override
-                    public void onLoadFinished(@NonNull Loader<String> loader, String s) {
-                        ArrayList<Cast> castList = null;
-                        try
-                        {
-                            castList = JsonUtils.getCastList(s);
-                        }catch (JSONException e)
-                        {
-                            e.printStackTrace();
-                        }
-                        mCastLoading.setVisibility(View.INVISIBLE);
-                        castAdapter.swapDataset(castList);
-                    }
-
-                    @Override
-                    public void onLoaderReset(@NonNull Loader<String> loader) {
-
-                    }
-                };
-
-                Bundle castBundle = new Bundle();
-                castBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/credits");
-
-                getActivity().getSupportLoaderManager().initLoader(CAST_LOADER_ID, castBundle, castCallbacks);
-
             }
 
             @Override
@@ -208,6 +171,93 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
         Bundle videoBundle = new Bundle();
         videoBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/videos");
         getActivity().getSupportLoaderManager().initLoader(VIDEO_LOADER_ID, videoBundle, videoCallbacks);
+
+        // hook up the cast list recycler view with a layout manager and adapter
+        mMovieCast.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        final CastListAdapter castAdapter = new CastListAdapter(MovieDetailsFragment.this);
+        mMovieCast.setAdapter(castAdapter);
+
+        // set up for perfomance optimization in recycler view
+        mMovieCast.setHasFixedSize(true);
+
+
+        // define callbacks for loader which loads cast data
+        LoaderManager.LoaderCallbacks<String> castCallbacks = new LoaderManager.LoaderCallbacks<String>() {
+            @NonNull
+            @Override
+            public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
+                return new MovieDataLoader(bundle.getString(MoviesListFragment.PATH_CODE), getContext(),mCastLoading, 1);
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<String> loader, String s) {
+                ArrayList<Cast> castList = null;
+                try
+                {
+                    castList = JsonUtils.getCastList(s);
+                }catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+                mCastLoading.setVisibility(View.INVISIBLE);
+                castAdapter.swapDataset(castList);
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<String> loader) {
+
+            }
+        };
+
+
+        // define bundle to supply to CAST_LOADER
+        Bundle castBundle = new Bundle();
+        castBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/credits");
+
+        // initialize cast holder
+        getActivity().getSupportLoaderManager().initLoader(CAST_LOADER_ID, castBundle, castCallbacks);
+
+
+        // hookup similar movies recycler view with layout manager and adapter
+        mMovieSimilar.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+        mMovieSimilar.setHasFixedSize(true);
+        final SimilarMoviesListAdapter similarMoviesListAdapter = new SimilarMoviesListAdapter();
+        mMovieSimilar.setAdapter(similarMoviesListAdapter);
+
+        // define callbacks for similar movies holder
+        LoaderManager.LoaderCallbacks<String> similarMoviesCallback = new LoaderManager.LoaderCallbacks<String>() {
+            @NonNull
+            @Override
+            public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
+                return new MovieDataLoader(bundle.getString(MoviesListFragment.PATH_CODE), getContext(), mSimilarLoading, 1);
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<String> loader, String s) {
+                ArrayList<Movie> similarMoviesList = null;
+                try
+                {
+                    similarMoviesList = JsonUtils.getMoviesList(s);
+                }catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+                mSimilarLoading.setVisibility(View.INVISIBLE);
+                similarMoviesListAdapter.swapDataset(similarMoviesList);
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<String> loader) {
+
+            }
+        };
+
+        // start loader to load similar movies data
+        Bundle similarMoviesBundle = new Bundle();
+        similarMoviesBundle.putString(MoviesListFragment.PATH_CODE, "movie/"+ mMovieId + "/similar");
+
+        // initialise the loader
+        getActivity().getSupportLoaderManager().initLoader(SIMILAR_MOVIES_LOADER_ID, similarMoviesBundle, similarMoviesCallback);
     }
 
     @Override
