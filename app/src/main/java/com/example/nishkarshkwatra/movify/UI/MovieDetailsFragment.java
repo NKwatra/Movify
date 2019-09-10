@@ -37,7 +37,8 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 
-public class MovieDetailsFragment extends Fragment implements YouTubePlayer.PlaybackEventListener, CastListAdapter.onItemClickListener {
+public class MovieDetailsFragment extends Fragment implements YouTubePlayer.PlaybackEventListener, CastListAdapter.onItemClickListener,
+SimilarMoviesListAdapter.onItemClickListener{
 
     // constant keys to store movie data
     public static final String MOVIE_NAME_KEY = "name";
@@ -50,6 +51,16 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
     public static final int VIDEO_LOADER_ID = 10000;
     public static final int CAST_LOADER_ID = 10001;
     public static final int SIMILAR_MOVIES_LOADER_ID = 10002;
+
+
+    // interface to be implemented by parent activity for repalcing fragments
+    public interface onMovieChangeListener
+    {
+        void onMovieChange(Movie newMovie);
+    }
+
+    // store reference to onMovieChangeListener
+    private onMovieChangeListener mMovieChangeListener;
 
     // member variables to store references
     private YouTubePlayerSupportFragment mMovieTrailer;
@@ -69,9 +80,10 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
     public MovieDetailsFragment(){}
 
     // Factory method to instantiate fragment
-    public static MovieDetailsFragment newInstance(Movie movie)
+    public static MovieDetailsFragment newInstance(Movie movie, onMovieChangeListener listener)
     {
         MovieDetailsFragment fragment = new MovieDetailsFragment();
+        fragment.mMovieChangeListener = listener;
         Bundle args = new Bundle();
         args.putString(MOVIE_NAME_KEY,movie.getmMovieName());
         args.putString(MOVIE_YEAR_KEY, movie.getmMovieReleaseYear());
@@ -170,7 +182,7 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
 
         Bundle videoBundle = new Bundle();
         videoBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/videos");
-        getActivity().getSupportLoaderManager().initLoader(VIDEO_LOADER_ID, videoBundle, videoCallbacks);
+        getActivity().getSupportLoaderManager().restartLoader(VIDEO_LOADER_ID, videoBundle, videoCallbacks);
 
         // hook up the cast list recycler view with a layout manager and adapter
         mMovieCast.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
@@ -215,13 +227,13 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
         castBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/credits");
 
         // initialize cast holder
-        getActivity().getSupportLoaderManager().initLoader(CAST_LOADER_ID, castBundle, castCallbacks);
+        getActivity().getSupportLoaderManager().restartLoader(CAST_LOADER_ID, castBundle, castCallbacks);
 
 
         // hookup similar movies recycler view with layout manager and adapter
         mMovieSimilar.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mMovieSimilar.setHasFixedSize(true);
-        final SimilarMoviesListAdapter similarMoviesListAdapter = new SimilarMoviesListAdapter();
+        final SimilarMoviesListAdapter similarMoviesListAdapter = new SimilarMoviesListAdapter(this);
         mMovieSimilar.setAdapter(similarMoviesListAdapter);
 
         // define callbacks for similar movies holder
@@ -257,7 +269,7 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
         similarMoviesBundle.putString(MoviesListFragment.PATH_CODE, "movie/"+ mMovieId + "/similar");
 
         // initialise the loader
-        getActivity().getSupportLoaderManager().initLoader(SIMILAR_MOVIES_LOADER_ID, similarMoviesBundle, similarMoviesCallback);
+        getActivity().getSupportLoaderManager().restartLoader(SIMILAR_MOVIES_LOADER_ID, similarMoviesBundle, similarMoviesCallback);
     }
 
     @Override
@@ -293,5 +305,10 @@ public class MovieDetailsFragment extends Fragment implements YouTubePlayer.Play
     public void onItemClick(Cast cast) {
         CastDetailFragment fragment = CastDetailFragment.newInstance(cast.getmCastId());
         fragment.show(getActivity().getSupportFragmentManager(), "cast info");
+    }
+
+    @Override
+    public void onItemClick(Movie movie) {
+        mMovieChangeListener.onMovieChange(movie);
     }
 }

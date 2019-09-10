@@ -18,9 +18,17 @@ import java.util.Arrays;
 
 public class SimilarMoviesListAdapter extends RecyclerView.Adapter<SimilarMoviesListAdapter.SimilarMoviesHolder> {
 
+    // interface for handling clicks
+    public interface  onItemClickListener
+    {
+        void onItemClick(Movie movie);
+    }
+
     // member variable, dataset for adapter
     private ArrayList<Movie> mSimilarMoviesDataset;
 
+    // reference to the click listener
+    private onItemClickListener onItemClickListener;
 
     // View holder class
     public  class SimilarMoviesHolder extends RecyclerView.ViewHolder{
@@ -35,13 +43,20 @@ public class SimilarMoviesListAdapter extends RecyclerView.Adapter<SimilarMovies
             super(view);
             mSimiliarMoviePoster = (ImageView)view.findViewById(R.id.iv_movie_detail_similar_image);
             mSimilarMovieName = (TextView) view.findViewById(R.id.tv_movie_detail_similar_name);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onItemClickListener.onItemClick(mSimilarMoviesDataset.get(getAdapterPosition()));
+                }
+            });
         }
 
     }
 
     // constructor
-    public SimilarMoviesListAdapter()
+    public SimilarMoviesListAdapter(onItemClickListener listener)
     {
+        onItemClickListener = listener;
     }
 
     // Inflate the layout for each view holder

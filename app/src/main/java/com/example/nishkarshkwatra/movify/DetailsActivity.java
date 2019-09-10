@@ -7,7 +7,7 @@ import android.os.Bundle;
 import com.example.nishkarshkwatra.movify.UI.MovieDetailsFragment;
 import com.example.nishkarshkwatra.movify.entity.Movie;
 
-public class DetailsActivity extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity implements MovieDetailsFragment.onMovieChangeListener{
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,12 +32,26 @@ public class DetailsActivity extends AppCompatActivity {
             Movie movie = new Movie(null, name, null, id, rating, description, year);
 
             // create a fragment to be attached to the details activity
-            MovieDetailsFragment fragment = MovieDetailsFragment.newInstance(movie);
+            MovieDetailsFragment fragment = MovieDetailsFragment.newInstance(movie, this);
 
             // attach the detail fragment to detail activity
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fl_detail_fragment_container, fragment)
                     .commit();
         }
+    }
+
+
+    @Override
+    public void onMovieChange(Movie newMovie) {
+
+        // Create an instance for fragment for the new movie
+        MovieDetailsFragment newMovieFragment = MovieDetailsFragment.newInstance(newMovie, this);
+
+        // replace the fragment and add previous fragment to backstack of Activity
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fl_detail_fragment_container, newMovieFragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
