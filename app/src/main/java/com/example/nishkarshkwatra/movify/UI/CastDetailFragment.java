@@ -2,6 +2,7 @@ package com.example.nishkarshkwatra.movify.UI;
 
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,6 +11,7 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -134,4 +136,5 @@ public class CastDetailFragment extends DialogFragment implements LoaderManager.
     public void onLoaderReset(@NonNull Loader<String> loader) {
 
     }
+
 }

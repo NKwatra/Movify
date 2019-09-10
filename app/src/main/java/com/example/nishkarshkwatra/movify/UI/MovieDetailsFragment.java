@@ -1,6 +1,7 @@
 package com.example.nishkarshkwatra.movify.UI;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,6 +12,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -55,6 +57,9 @@ SimilarMoviesListAdapter.onItemClickListener{
     public static final int SIMILAR_MOVIES_LOADER_ID = 10002;
     public static final int REVIEW_LOADER_ID = 10003;
 
+    // constant for movie page on TmDb
+    public static final String MOVIE_BASE_URL = "https://www.themoviedb.org/movie/";
+
     // interface to be implemented by parent activity for repalcing fragments
     public interface onMovieChangeListener
     {
@@ -95,6 +100,14 @@ SimilarMoviesListAdapter.onItemClickListener{
         args.putInt(MOVIE_ID_KEY, movie.getmMovieId());
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        // tell the system that this fragment will respond to options menu items
+        setHasOptionsMenu(true);
     }
 
     @Nullable
@@ -354,5 +367,33 @@ SimilarMoviesListAdapter.onItemClickListener{
     @Override
     public void onItemClick(Movie movie) {
         mMovieChangeListener.onMovieChange(movie);
+    }
+
+    // create option to share movie link on clicking the share button
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        // if share button is pressed, create share intent
+        if(item.getItemId() == R.id.menu_item_share)
+        {
+            StringBuffer buf = new StringBuffer();
+            buf.append("Hey, Checkout this awesome movie! ");
+            buf.append(MOVIE_BASE_URL);
+            buf.append(mMovieId);
+
+            Intent shareMovieIntent = new Intent();
+            shareMovieIntent.setAction(Intent.ACTION_SEND);
+            shareMovieIntent.putExtra(Intent.EXTRA_TEXT, buf.toString());
+            shareMovieIntent.setType("text/plain");
+
+            Intent shareIntent = Intent.createChooser(shareMovieIntent, "Share Movie");
+            startActivity(shareIntent);
+            // return true to tell android system that we are manually handling this event
+            return  true;
+        }
+        // else let super class handle the event
+        else
+            return super.onOptionsItemSelected(item);
     }
 }
