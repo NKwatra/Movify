@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,11 +12,11 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import com.example.nishkarshkwatra.movify.R;
+import com.example.nishkarshkwatra.movify.adapter.GenreListAdapter;
 
-public class GenreListFragment extends Fragment {
+public class GenreListFragment extends Fragment implements GenreListAdapter.onItemClickListener{
 
     private RecyclerView mGenreListRecyclerView;
-    private ProgressBar mGenreLoadingProgressBar;
 
     public GenreListFragment()
     {
@@ -30,9 +31,17 @@ public class GenreListFragment extends Fragment {
 
         // Get reference to various vies in the layout
         mGenreListRecyclerView = (RecyclerView) fragmentRoot.findViewById(R.id.rv_movies_holder);
-        mGenreLoadingProgressBar = (ProgressBar) fragmentRoot.findViewById(R.id.pb_movies_loading);
+
+        // hook up  recycler view with layout manager and adapter
+        mGenreListRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mGenreListRecyclerView.setAdapter(new GenreListAdapter(this));
 
         // Return the root layout of the fragment
         return fragmentRoot;
+    }
+
+    @Override
+    public void onItemClick(int id) {
+
     }
 }
