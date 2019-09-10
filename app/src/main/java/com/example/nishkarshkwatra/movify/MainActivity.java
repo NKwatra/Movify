@@ -24,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
         mMoviesAdapter = new MoviesPagerAdapter(this, getSupportFragmentManager());
 
         mMoviesViewPager.setAdapter(mMoviesAdapter);
+        mMoviesViewPager.setOffscreenPageLimit(3);
 
         mMoviesTabLayout.setupWithViewPager(mMoviesViewPager);
 
