@@ -25,10 +25,12 @@ import com.example.nishkarshkwatra.movify.Networking.MovieDataLoader;
 import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.adapter.CastListAdapter;
 import com.example.nishkarshkwatra.movify.adapter.MovieListAdapter;
+import com.example.nishkarshkwatra.movify.adapter.ReviewListAdapter;
 import com.example.nishkarshkwatra.movify.adapter.SimilarMoviesListAdapter;
 import com.example.nishkarshkwatra.movify.data.JsonUtils;
 import com.example.nishkarshkwatra.movify.entity.Cast;
 import com.example.nishkarshkwatra.movify.entity.Movie;
+import com.example.nishkarshkwatra.movify.entity.Review;
 import com.google.android.youtube.player.YouTubeInitializationResult;
 import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
@@ -51,7 +53,7 @@ SimilarMoviesListAdapter.onItemClickListener{
     public static final int VIDEO_LOADER_ID = 10000;
     public static final int CAST_LOADER_ID = 10001;
     public static final int SIMILAR_MOVIES_LOADER_ID = 10002;
-
+    public static final int REVIEW_LOADER_ID = 10003;
 
     // interface to be implemented by parent activity for repalcing fragments
     public interface onMovieChangeListener
@@ -75,6 +77,7 @@ SimilarMoviesListAdapter.onItemClickListener{
     private int mMovieId;
     private ProgressBar mCastLoading;
     private ProgressBar mSimilarLoading;
+    private ProgressBar mReviewsLoading;
 
     // empty constructor for super class
     public MovieDetailsFragment(){}
@@ -111,6 +114,7 @@ SimilarMoviesListAdapter.onItemClickListener{
         mMovieReviews = (RecyclerView) view.findViewById(R.id.rv_movie_detail_reviews);
         mCastLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_cast_loading);
         mSimilarLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_similar_loading);
+        mReviewsLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_reviews_loading);
 
         // fetch values of arguments
         Bundle arguments = getArguments();
@@ -169,7 +173,7 @@ SimilarMoviesListAdapter.onItemClickListener{
                     });
                 }else
                 {
-                    Toast.makeText(getContext(), "No video found for this movie", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "No trailer available for this movie", Toast.LENGTH_LONG).show();
                 }
 
             }
@@ -236,7 +240,7 @@ SimilarMoviesListAdapter.onItemClickListener{
         final SimilarMoviesListAdapter similarMoviesListAdapter = new SimilarMoviesListAdapter(this);
         mMovieSimilar.setAdapter(similarMoviesListAdapter);
 
-        // define callbacks for similar movies holder
+        // define callbacks for similar movies loader
         LoaderManager.LoaderCallbacks<String> similarMoviesCallback = new LoaderManager.LoaderCallbacks<String>() {
             @NonNull
             @Override
@@ -270,6 +274,46 @@ SimilarMoviesListAdapter.onItemClickListener{
 
         // initialise the loader
         getActivity().getSupportLoaderManager().restartLoader(SIMILAR_MOVIES_LOADER_ID, similarMoviesBundle, similarMoviesCallback);
+
+
+        // hook up reviews recycler view with layout manager and adapter
+        mMovieReviews.setLayoutManager(new LinearLayoutManager(getContext()));
+        final ReviewListAdapter reviewsListAdapter = new ReviewListAdapter();
+        mMovieReviews.setAdapter(reviewsListAdapter);
+
+        // define callbacks for reviews loader
+        LoaderManager.LoaderCallbacks<String> reviewsCallback = new LoaderManager.LoaderCallbacks<String>() {
+            @NonNull
+            @Override
+            public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
+                return new MovieDataLoader(bundle.getString(MoviesListFragment.PATH_CODE), getContext(), mReviewsLoading, 1);
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<String> loader, String s) {
+                ArrayList<Review> reviewsList = null;
+                try
+                {
+                    reviewsList = JsonUtils.getReviewsList(s);
+                }catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+                mReviewsLoading.setVisibility(View.INVISIBLE);
+                reviewsListAdapter.swapDataset(reviewsList);
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<String> loader) {
+
+            }
+        };
+
+        // instantiate the loader
+        Bundle reviewBundle = new Bundle();
+        reviewBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/reviews");
+
+        getActivity().getSupportLoaderManager().restartLoader(REVIEW_LOADER_ID,reviewBundle, reviewsCallback);
     }
 
     @Override

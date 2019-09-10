@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.nishkarshkwatra.movify.entity.Cast;
 import com.example.nishkarshkwatra.movify.entity.Movie;
+import com.example.nishkarshkwatra.movify.entity.Review;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -89,6 +90,21 @@ public class JsonUtils {
         response[1] = root.getString("name");
         response[2] = root.getString("biography");
         Log.d("JsonUtils", response[2]);
+        return response;
+    }
+
+    public static ArrayList<Review> getReviewsList(String rawJson) throws JSONException
+    {
+        ArrayList<Review> response = new ArrayList<>();
+        JSONObject root = new JSONObject(rawJson);
+        JSONArray results = root.getJSONArray("results");
+        for(int i =0; i < Math.min(10, results.length()); i++)
+        {
+            JSONObject currentReview = results.getJSONObject(i);
+            String author = currentReview.getString("author");
+            String content = currentReview.getString("content");
+            response.add(new Review(author, content));
+        }
         return response;
     }
 }
