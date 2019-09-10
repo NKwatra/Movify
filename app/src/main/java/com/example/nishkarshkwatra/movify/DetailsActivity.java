@@ -3,6 +3,7 @@ package com.example.nishkarshkwatra.movify;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 
 import com.example.nishkarshkwatra.movify.UI.MovieDetailsFragment;
 import com.example.nishkarshkwatra.movify.entity.Movie;
@@ -53,5 +54,11 @@ public class DetailsActivity extends AppCompatActivity implements MovieDetailsFr
                 .replace(R.id.fl_detail_fragment_container, newMovieFragment)
                 .addToBackStack(null)
                 .commit();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.detail_activity_menu, menu);
+        return true;
     }
 }

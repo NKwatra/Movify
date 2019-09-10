@@ -12,7 +12,10 @@ public class Movie {
     private double mMovieAverageRating;
     private String mMovieSynopsis;
     private String mMovieReleaseYear;
+    private String mMovieUrl;
 
+    // constant for movie page on TmDb
+    public static final String MOVIE_BASE_URL = "https://www.themoviedb.org/movie/";
 
     /* Constructor
      *   @Param poster: The path of movie poster
@@ -31,6 +34,7 @@ public class Movie {
         mMovieAverageRating = avg_rating;
         mMovieSynopsis = synopsis;
         mMovieReleaseYear = release_year;
+        mMovieUrl = MOVIE_BASE_URL + mMovieId;
     }
 
     // override equals method to perform a deep equality check
@@ -69,5 +73,9 @@ public class Movie {
 
     public String getmMovieReleaseYear() {
         return mMovieReleaseYear;
+    }
+
+    public String getmMovieUrl() {
+        return mMovieUrl;
     }
 }
