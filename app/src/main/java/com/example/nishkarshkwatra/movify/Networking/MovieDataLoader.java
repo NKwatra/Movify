@@ -13,17 +13,35 @@ public class MovieDataLoader extends AsyncTaskLoader<String> {
     private String mResultCache;
     private ProgressBar mLoadingIndicator;
     private int mPageNo;
+    private int mGenreId = 0;
 
     // Constructor
     // @Param path: The path of request url to query
     // @Param context: A context object(activity) to which loader needs to be associated
     // @Param loadingIndicator: a progress bar to show when loading data
+    // @Param pageNo: page number to be queried
     public MovieDataLoader(String path, Context context, ProgressBar loadingIndicator, int pageNo)
     {
         super(context);
         mPath = path;
         mLoadingIndicator = loadingIndicator;
         mPageNo = pageNo;
+    }
+
+    // Overloaded constructor to handle cases where genre is supplied
+    // Constructor
+    // @Param path: The path of request url to query
+    // @Param context: A context object(activity) to which loader needs to be associated
+    // @Param loadingIndicator: a progress bar to show when loading data
+    // @Param pageNo: page number to be queried
+    // @Param genreId : id of genre to be queried
+    public MovieDataLoader(String path, Context context, ProgressBar loadingIndicator, int pageNo, int genreId)
+    {
+        super(context);
+        mPath = path;
+        mLoadingIndicator = loadingIndicator;
+        mPageNo = pageNo;
+        mGenreId = genreId;
     }
 
 
@@ -43,8 +61,14 @@ public class MovieDataLoader extends AsyncTaskLoader<String> {
     @Nullable
     @Override
     public String loadInBackground() {
-        // Return the raw JSON response from the API.
-        return NetworkUtils.getHttpsResponse(mPath, mPageNo);
+
+        // no genre supplied
+        if(mGenreId == 0)
+            // Return the raw JSON response from the API.
+            return NetworkUtils.getHttpsResponse(mPath, mPageNo);
+        else
+            // Return results from a particular genre
+            return NetworkUtils.getHttpsResponse(mPath, mPageNo, mGenreId);
     }
 
     @Override

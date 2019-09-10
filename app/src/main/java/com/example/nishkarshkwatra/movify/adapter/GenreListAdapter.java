@@ -101,6 +101,12 @@ public class GenreListAdapter extends RecyclerView.Adapter<GenreListAdapter.Genr
         {
             super(view);
             mGenreNameTextView = (TextView) view.findViewById(R.id.tv_genre_name);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mClickListener.onItemClick(genreToIdMapping.get(mGenreDataset.get(getAdapterPosition())));
+                }
+            });
         }
     }
 

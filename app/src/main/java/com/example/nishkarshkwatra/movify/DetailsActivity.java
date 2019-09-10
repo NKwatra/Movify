@@ -39,6 +39,8 @@ public class DetailsActivity extends AppCompatActivity implements MovieDetailsFr
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.fl_detail_fragment_container, fragment)
                     .commit();
+
+            this.setTitle(name);
         }
     }
 

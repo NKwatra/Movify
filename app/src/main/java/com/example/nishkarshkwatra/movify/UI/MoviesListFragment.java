@@ -34,6 +34,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     public static final String LOADER_ID_CODE = "loader";
     public static final String PATH_CODE = "path";
     public static final String PAGE_CODE = "page";
+    public static final String GENRE_CODE = "genre";
 
     // define log tag
     public static final String LOG_TAG = "MoviesListFragment";
@@ -45,6 +46,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     private String mPath;
     private MovieListAdapter mMovieListAdapter;
     private int mPageNo;
+    private int mGenreId = 0;
 
     public MoviesListFragment()
     {
@@ -62,6 +64,19 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         return fragment;
     }
 
+    // overload newInstance to fetch movies of a particular genre
+    public static MoviesListFragment newInstance(int loaderId, String path, int genreId)
+    {
+        MoviesListFragment fragment = new MoviesListFragment();
+        Bundle args = new Bundle();
+        args.putInt(LOADER_ID_CODE, loaderId);
+        args.putString(PATH_CODE, path);
+        args.putInt(GENRE_CODE, genreId);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -70,6 +85,10 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         // obtain the parameters for loader and path
         mLoaderId = arguments.getInt(LOADER_ID_CODE);
         mPath = arguments.getString(PATH_CODE);
+
+        // store genre Id if genre is added
+        if(arguments.containsKey(GENRE_CODE))
+            mGenreId = arguments.getInt(GENRE_CODE);
     }
 
     @Nullable
@@ -145,7 +164,10 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     @NonNull
     @Override
     public Loader<String> onCreateLoader(int i, @Nullable Bundle bundle) {
-        return new MovieDataLoader(mPath, getContext(), mMoviesLoadingProgressBar, bundle.getInt(PAGE_CODE));
+        if(mGenreId == 0)
+            return new MovieDataLoader(mPath, getContext(), mMoviesLoadingProgressBar, bundle.getInt(PAGE_CODE));
+        else
+            return new MovieDataLoader(mPath, getContext(), mMoviesLoadingProgressBar, bundle.getInt(PAGE_CODE), mGenreId);
     }
 
     @Override

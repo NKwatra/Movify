@@ -1,5 +1,6 @@
 package com.example.nishkarshkwatra.movify.UI;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -11,10 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.example.nishkarshkwatra.movify.GenreActivity;
 import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.adapter.GenreListAdapter;
 
 public class GenreListFragment extends Fragment implements GenreListAdapter.onItemClickListener{
+
+    // constant for loader Id
+    public static final int LOADER_ID = 200;
+
+    // constant for path
+    public static final String GENRE_PATH = "discover/movie";
 
     private RecyclerView mGenreListRecyclerView;
 
@@ -42,6 +50,12 @@ public class GenreListFragment extends Fragment implements GenreListAdapter.onIt
 
     @Override
     public void onItemClick(int id) {
+
+        // create intent to launch genre activity
+        Intent startGenreActivityIntent = new Intent(getContext(), GenreActivity.class);
+        startGenreActivityIntent.putExtra(GenreActivity.GENRE_ID_INTENT_EXTRA, id);
+
+        startActivity(startGenreActivityIntent);
 
     }
 }
