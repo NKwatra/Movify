@@ -92,6 +92,21 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         mMoviesListRecyclerView = (RecyclerView) fragmentRoot.findViewById(R.id.rv_movies_holder);
         mMoviesLoadingProgressBar = (ProgressBar) fragmentRoot.findViewById(R.id.pb_movies_loading);
 
+        // hook up recycler view to a grid layout
+        // create 2 column grid in portrait mode and 4 column in landscape mode
+        if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
+        {
+            mMoviesListRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
+        }else
+        {
+            mMoviesListRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
+        }
+
+
+        // hook up recycler view to adapter
+        mMovieListAdapter = new MovieListAdapter(this);
+        mMoviesListRecyclerView.setAdapter(mMovieListAdapter);
+
 
         // Return the root layout of the fragment
         return fragmentRoot;
@@ -107,20 +122,6 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
 
         getActivity().getSupportLoaderManager().initLoader(mLoaderId, bundle, this);
 
-        // hook up recycler view to a grid layout
-        // create 2 column grid in portrait mode and 4 column in landscape mode
-        if(getActivity().getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT)
-        {
-            mMoviesListRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 2));
-        }else
-        {
-            mMoviesListRecyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
-        }
-
-
-        // hook up recycler view to adapter
-        mMovieListAdapter = new MovieListAdapter(this);
-        mMoviesListRecyclerView.setAdapter(mMovieListAdapter);
 
         // register scroll listener on recycler view and load new data whenever user scrolls to the end
         mMoviesListRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -160,6 +161,8 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         }
         // update the adapter with newly fetched data
         mMovieListAdapter.swapDataset(response);
+
+        Log.d("MovieListFragment", s);
         // Hide the loading indicator
         mMoviesLoadingProgressBar.setVisibility(View.INVISIBLE);
     }
@@ -190,4 +193,5 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         // save the page no to be loaded in the instance state
         outState.putInt(PAGE_CODE, mPageNo);
     }
+
 }

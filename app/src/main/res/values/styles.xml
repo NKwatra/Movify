@@ -8,8 +8,14 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Style for rating bar-->
     <style name="RatingBarCustomStyle" parent="Theme.AppCompat">
         <item name="colorControlNormal">@android:color/darker_gray</item>
         <item name="colorControlActivated">@android:color/holo_red_light</item>
+    </style>
+    
+    <!-- Style for Tab Layout used in view pager -->
+    <style name="customTabLayout" parent="TextAppearance.Design.Tab">
+        <item name="android:textSize">14sp</item>
     </style>
 </resources>

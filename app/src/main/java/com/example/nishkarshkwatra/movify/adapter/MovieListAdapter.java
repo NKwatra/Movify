@@ -26,7 +26,7 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     // member variable for data source of the adapter
     private ArrayList<Movie> mMoviesDataset;
-    private static onItemClickHandler mItemClickHandler;
+    private onItemClickHandler mItemClickHandler;
 
     // Base Url for loading images
     public static final String BASE_IMAGE_URL = "https://image.tmdb.org/t/p/original/";

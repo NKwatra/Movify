@@ -6,10 +6,16 @@
     android:orientation="vertical">
 
     <android.support.design.widget.TabLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
         android:id="@+id/tl_movie_tabs"
         app:tabTextColor="#000000"
+        app:tabMode="scrollable"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
         app:tabSelectedTextColor="@color/colorAccent"/>
 
     <android.support.v4.view.ViewPager

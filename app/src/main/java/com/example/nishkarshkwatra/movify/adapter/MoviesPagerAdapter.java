@@ -15,8 +15,10 @@ public class MoviesPagerAdapter extends FragmentPagerAdapter {
     // constants for loader id and path
     public static final int TRENDING_LOADER_ID = 1000;
     public static final int TOP_RATED_LOADER_ID = 1001;
+    public static final int UPCOMING_LOADER_ID = 1002;
     public static final String TRENDING_PATH = "movie/popular";
     public static final String TOP_RATED_PATH = "movie/top_rated";
+    public static final String UPCOMING_PATH = "movie/upcoming";
 
     // define member to store a reference to context
     private Context mContext;
@@ -36,13 +38,14 @@ public class MoviesPagerAdapter extends FragmentPagerAdapter {
             case 0: return new GenreListFragment();
             case 1: return MoviesListFragment.newInstance(TRENDING_LOADER_ID, TRENDING_PATH);
             case 2: return MoviesListFragment.newInstance(TOP_RATED_LOADER_ID, TOP_RATED_PATH);
+            case 3: return MoviesListFragment.newInstance(UPCOMING_LOADER_ID, UPCOMING_PATH);
             default: return null;
         }
     }
 
     @Override
     public int getCount() {
-        return 3;
+        return 4;
     }
 
     @Nullable
@@ -57,6 +60,8 @@ public class MoviesPagerAdapter extends FragmentPagerAdapter {
             case 1: tabName =  mContext.getResources().getString(R.string.movies_classification_trending);
                     break;
             case 2: tabName =  mContext.getResources().getString(R.string.movies_classification_top_rated);
+                    break;
+            case 3: tabName = mContext.getResources().getString(R.string.movies_classification_upcoming);
                     break;
         }
 

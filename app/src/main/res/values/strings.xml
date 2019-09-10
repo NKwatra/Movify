@@ -5,6 +5,7 @@
     <string name="movies_classification_genre">GENRE</string>
     <string name="movies_classification_trending">TRENDING</string>
     <string name="movies_classification_top_rated">TOP RATED</string>
+    <string name="movies_classification_upcoming">UPCOMING</string>
 
     <!-- string resources for detail page -->
     <string name="header_synopsis">SYNOPSIS</string>
