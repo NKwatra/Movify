@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
@@ -183,7 +184,7 @@ SimilarMoviesListAdapter.onItemClickListener{
                 values.put(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_POSTER_URI, location);
 
                 // diplay a toolbar message of movie added to favourites
-
+                Snackbar.make(getActivity().findViewById(R.id.cl_snackbar_associate), R.string.bookmark_done_text, Snackbar.LENGTH_LONG).show();
 
                 getContext().getContentResolver().insert(FavouritesDatabaseContract.FavouriteEntry.CONTENT_URI, values);
             }
