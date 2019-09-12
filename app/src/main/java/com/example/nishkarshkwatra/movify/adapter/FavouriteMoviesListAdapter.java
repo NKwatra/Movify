@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
@@ -20,7 +21,7 @@ public class FavouriteMoviesListAdapter extends RecyclerView.Adapter<FavouriteMo
     public FavouriteMovieHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
 
         // inflate text view for each list item and create a view holder
-        TextView view = (TextView) LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.favourite_movies_list_item, viewGroup, false);
+        View view =  LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.favourite_movies_list_item, viewGroup, false);
         return new FavouriteMovieHolder(view);
     }
 
@@ -30,14 +31,17 @@ public class FavouriteMoviesListAdapter extends RecyclerView.Adapter<FavouriteMo
         // data exists in given position in the cursor, then update the data
         if(mFavouritesDataSource.moveToPosition(position))
         {
-            favouriteMovieHolder.mFavouriteMovieTextView.setText(mFavouritesDataSource.getString(1));
+            favouriteMovieHolder.mFavouriteMovieTextView.setText(mFavouritesDataSource.getString(2));
         }
     }
 
     @Override
     public int getItemCount() {
         // return the total number of items
-        return mFavouritesDataSource.getCount();
+        if(mFavouritesDataSource ==null)
+            return 0;
+        else
+            return mFavouritesDataSource.getCount();
     }
 
     public class FavouriteMovieHolder extends RecyclerView.ViewHolder
@@ -45,10 +49,10 @@ public class FavouriteMoviesListAdapter extends RecyclerView.Adapter<FavouriteMo
         // create member variable to store reference to text view
         private TextView mFavouriteMovieTextView;
 
-        public FavouriteMovieHolder(TextView view)
+        public FavouriteMovieHolder(View view)
         {
             super(view);
-            mFavouriteMovieTextView = view;
+            mFavouriteMovieTextView = (TextView) view.findViewById(R.id.tv_favourite_movie_list_name);
         }
     }
 
