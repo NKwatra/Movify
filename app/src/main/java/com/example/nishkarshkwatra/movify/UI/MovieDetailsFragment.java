@@ -1,8 +1,13 @@
 package com.example.nishkarshkwatra.movify.UI;
 
 
+import android.app.DownloadManager;
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -29,6 +34,7 @@ import com.example.nishkarshkwatra.movify.adapter.CastListAdapter;
 import com.example.nishkarshkwatra.movify.adapter.MovieListAdapter;
 import com.example.nishkarshkwatra.movify.adapter.ReviewListAdapter;
 import com.example.nishkarshkwatra.movify.adapter.SimilarMoviesListAdapter;
+import com.example.nishkarshkwatra.movify.data.FavouritesDatabaseContract;
 import com.example.nishkarshkwatra.movify.data.JsonUtils;
 import com.example.nishkarshkwatra.movify.entity.Cast;
 import com.example.nishkarshkwatra.movify.entity.Movie;
@@ -39,6 +45,7 @@ import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 
 import org.json.JSONException;
 
+import java.io.File;
 import java.util.ArrayList;
 
 public class MovieDetailsFragment extends Fragment implements YouTubePlayer.PlaybackEventListener, CastListAdapter.onItemClickListener,
@@ -50,6 +57,8 @@ SimilarMoviesListAdapter.onItemClickListener{
     public static final String MOVIE_RATING_KEY = "rating";
     public static final String MOVIE_DESCRIPTION_KEY = "synopsis";
     public static final String MOVIE_ID_KEY = "id";
+    public static final String MOVIE_GENRES_KEY = "genres";
+    public static final String MOVIE_POSTER_KEY = "poster";
 
     // constants for loader ids
     public static final int VIDEO_LOADER_ID = 10000;
@@ -80,6 +89,7 @@ SimilarMoviesListAdapter.onItemClickListener{
     private RecyclerView mMovieSimilar;
     private RecyclerView mMovieReviews;
     private int mMovieId;
+    private String mMoviePoster;
     private ProgressBar mCastLoading;
     private ProgressBar mSimilarLoading;
     private ProgressBar mReviewsLoading;
@@ -98,6 +108,8 @@ SimilarMoviesListAdapter.onItemClickListener{
         args.putDouble(MOVIE_RATING_KEY, movie.getmMovieAverageRating());
         args.putString(MOVIE_DESCRIPTION_KEY, movie.getmMovieSynopsis());
         args.putInt(MOVIE_ID_KEY, movie.getmMovieId());
+        args.putIntArray(MOVIE_GENRES_KEY, movie.getmMovieGenres());
+        args.putString(MOVIE_POSTER_KEY, movie.getmMoviePoster());
         fragment.setArguments(args);
         return fragment;
     }
@@ -130,19 +142,88 @@ SimilarMoviesListAdapter.onItemClickListener{
         mReviewsLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_reviews_loading);
 
         // fetch values of arguments
-        Bundle arguments = getArguments();
+       final  Bundle arguments = getArguments();
 
         // display values of various movie paramters
         mMovieName.setText(arguments.getString(MOVIE_NAME_KEY));
         mMovieReleaseYear.setText(arguments.getString(MOVIE_YEAR_KEY));
         mMovieSynopsis.setText(arguments.getString(MOVIE_DESCRIPTION_KEY));
         mMovieAverageRating.setRating((float)arguments.getDouble(MOVIE_RATING_KEY));
+        mMoviePoster = arguments.getString(MOVIE_POSTER_KEY);
 
         // store movie id value
         mMovieId = arguments.getInt(MOVIE_ID_KEY);
 
+        // attach a click listener to bookmark button
+        mMovieBookmarkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                mMovieBookmarkButton.setImageResource(R.drawable.baseline_star_black_36);
+
+                // convert list of genres into a string
+                // Eg [1,3,2] --> 1:3:2:
+                StringBuffer buffer = new StringBuffer();
+                for(int num: arguments.getIntArray(MOVIE_GENRES_KEY))
+                    buffer.append(num + ":");
+
+                // obtain values of various movie attributes and store in a content values object
+                ContentValues values = new ContentValues();
+                values.put(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_NAME, mMovieName.getText().toString());
+                values.put(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_AVERAGE_RATING,arguments.getDouble(MOVIE_RATING_KEY) );
+                values.put(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_GENRES, buffer.toString());
+                values.put(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_ID, mMovieId);
+                values.put(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_RELEASE_YEAR, mMovieReleaseYear.getText().toString());
+                values.put(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_SYNOPSIS, mMovieSynopsis.getText().toString());
+
+                // method to download the poster image of movie
+                // returns the location of poster on external storage
+                String location = downloadPoster(MovieListAdapter.BASE_IMAGE_URL  + mMoviePoster);
+                values.put(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_POSTER_URI, location);
+
+                // diplay a toolbar message of movie added to favourites
+
+
+                getContext().getContentResolver().insert(FavouritesDatabaseContract.FavouriteEntry.CONTENT_URI, values);
+            }
+        });
+
 
         return view;
+    }
+
+    public String downloadPoster(String posterUrl)
+    {
+        // obtain a reference to required directory, path would be like app's_external_directory/files/pictures/Favourite movies
+        File imageDir = new File(getContext().getExternalFilesDir(
+                Environment.DIRECTORY_PICTURES), "Favourite Movies");
+
+        // create the directory if it doesn't exist
+        if(!imageDir.exists())
+            imageDir.mkdirs();
+
+        // obtain a reference to Download manager
+        DownloadManager manager = (DownloadManager)getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+
+        // create a uri from string
+        Uri downloadUri = Uri.parse(posterUrl);
+
+        // create a new request
+        DownloadManager.Request request = new DownloadManager.Request(downloadUri);
+
+        // add request attributes
+        request.setAllowedNetworkTypes(
+                DownloadManager.Request.NETWORK_WIFI| DownloadManager.Request.NETWORK_MOBILE)
+                .setAllowedOverRoaming(false).setTitle("Downloading" + mMovieName.getText())
+                .setDescription("Saving the file " + mMovieName.getText() + " onto the phone")
+                .setDestinationInExternalFilesDir(getContext(),Environment.DIRECTORY_PICTURES, "Favourite Movies/" + mMovieId + ".jpg" );
+
+        // make a request to download
+        manager.enqueue(request);
+
+        return getContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES) + "/Favourite Movies/" + mMovieId + ".jpg";
+
     }
 
     @Override
