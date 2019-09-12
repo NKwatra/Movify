@@ -48,7 +48,31 @@ public class FavouriteMoviesProvider extends ContentProvider {
 
     @Override
     public Cursor query(Uri uri, String[] projection,  String selection, String[] selectionArgs, String sortOrder) {
-        return null;
+
+        // get a reference to readable database
+        SQLiteDatabase db = mFavouriteMovieDbHelper.getReadableDatabase();
+
+        // match the uri
+        int match = sUriMatcher.match(uri);
+
+        Cursor result = null;
+
+        switch (match)
+        {
+            case ALL_MOVIES_ID:
+                result = db.query(FavouritesDatabaseContract.FavouriteEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            case MOVIE_WITH_ID: break;
+            default: throw  new UnsupportedOperationException("Unsupported uri " + uri);
+        }
+
+        return result;
     }
 
 
