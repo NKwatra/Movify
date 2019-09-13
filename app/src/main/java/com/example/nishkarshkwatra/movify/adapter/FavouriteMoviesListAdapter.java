@@ -13,8 +13,22 @@ import com.example.nishkarshkwatra.movify.data.FavouritesDatabaseContract;
 
 public class FavouriteMoviesListAdapter extends RecyclerView.Adapter<FavouriteMoviesListAdapter.FavouriteMovieHolder> {
 
+    // interface to handle click events
+    public interface onItemClickHandler
+    {
+        void onItemClick(int movieId, int dbId);
+    }
+
     // add cursor for data source
     private Cursor mFavouritesDataSource;
+
+    // obtain reference to click handler
+    private onItemClickHandler mOnItemClickHandler;
+
+    public FavouriteMoviesListAdapter(onItemClickHandler handler)
+    {
+        mOnItemClickHandler = handler;
+    }
 
     @NonNull
     @Override
@@ -53,6 +67,15 @@ public class FavouriteMoviesListAdapter extends RecyclerView.Adapter<FavouriteMo
         {
             super(view);
             mFavouriteMovieTextView = (TextView) view.findViewById(R.id.tv_favourite_movie_list_name);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    mFavouritesDataSource.moveToPosition(getAdapterPosition());
+                    int id = mFavouritesDataSource.getInt(mFavouritesDataSource.getColumnIndex(FavouritesDatabaseContract.FavouriteEntry._ID));
+                    int movieId = mFavouritesDataSource.getInt(mFavouritesDataSource.getColumnIndex(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_ID));
+                    mOnItemClickHandler.onItemClick(movieId, id);
+                }
+            });
         }
     }
 

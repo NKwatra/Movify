@@ -59,6 +59,7 @@ public class FavouriteMoviesProvider extends ContentProvider {
 
         switch (match)
         {
+            // case when we have to query full movies table
             case ALL_MOVIES_ID:
                 result = db.query(FavouritesDatabaseContract.FavouriteEntry.TABLE_NAME,
                         projection,
@@ -68,7 +69,16 @@ public class FavouriteMoviesProvider extends ContentProvider {
                         null,
                         sortOrder);
                 break;
-            case MOVIE_WITH_ID: break;
+            // case when we have to query a particular row of the table
+            case MOVIE_WITH_ID:
+                String rowId = uri.getLastPathSegment();
+                result = db.query(FavouritesDatabaseContract.FavouriteEntry.TABLE_NAME,
+                        projection,
+                        FavouritesDatabaseContract.FavouriteEntry._ID + "=?",
+                        new String[] {rowId},
+                        null,
+                        null, sortOrder);
+                break;
             default: throw  new UnsupportedOperationException("Unsupported uri " + uri);
         }
 

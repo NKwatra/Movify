@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".FavouritesActivity"
-    android:id="@+id/fl_favpurite_movies_list_container">
+    android:id="@+id/fl_favourite_movies_list_container">
 
 
 </FrameLayout>

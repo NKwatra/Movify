@@ -19,18 +19,33 @@ import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.adapter.FavouriteMoviesListAdapter;
 import com.example.nishkarshkwatra.movify.data.FavouritesDatabaseContract;
 
-public class FavouriteMoviesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class FavouriteMoviesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FavouriteMoviesListAdapter.onItemClickHandler{
+
+    public interface onMovieDetailDisplayListener
+    {
+        void movieDetailDisplay(int movieId, int dbId);
+    }
+
 
     public static final int LOADER_ID = 300;
 
     private RecyclerView mFavouriteMovieRecyclerView;
     private ProgressBar mLoadingIndicator;
     private FavouriteMoviesListAdapter mMoviesAdapter;
+    private onMovieDetailDisplayListener listener;
 
     public FavouriteMoviesListFragment()
     {
         // empty constructor
     }
+
+    public static FavouriteMoviesListFragment newInstance(onMovieDetailDisplayListener movieDetailDisplayListener)
+    {
+        FavouriteMoviesListFragment fragment = new FavouriteMoviesListFragment();
+        fragment.listener = movieDetailDisplayListener;
+        return fragment;
+    }
+
 
     @Nullable
     @Override
@@ -45,8 +60,9 @@ public class FavouriteMoviesListFragment extends Fragment implements LoaderManag
 
         // hook up recycler view with layout manager and adapter
         mFavouriteMovieRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-        mMoviesAdapter = new FavouriteMoviesListAdapter();
+        mMoviesAdapter = new FavouriteMoviesListAdapter(this);
         mFavouriteMovieRecyclerView.setAdapter(mMoviesAdapter);
+
 
         return  view;
     }
@@ -74,5 +90,10 @@ public class FavouriteMoviesListFragment extends Fragment implements LoaderManag
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
         mMoviesAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void onItemClick(int movieId, int dbId) {
+        listener.movieDetailDisplay(movieId, dbId);
     }
 }
