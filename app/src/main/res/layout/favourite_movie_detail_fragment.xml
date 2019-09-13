@@ -1,124 +1,143 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:orientation="vertical"
     android:layout_height="match_parent">
-<android.support.v7.widget.CardView
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    app:cardElevation="10dp">
-<android.support.constraint.ConstraintLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:paddingBottom="16dp">
 
-    <fragment
-        android:id="@+id/youtube_player_favourite_movie_detail_trailer"
-        android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
-        android:layout_width="0dp"
-        android:layout_height="250dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/iv_favourite_movie_detail_poster"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="220dp"
-        app:layout_constraintStart_toStartOf="@+id/youtube_player_favourite_movie_detail_trailer"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/sym_def_app_icon" />
-
-    <TextView
-        android:id="@+id/tv_favourite_movie_detail_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:textColor="@android:color/black"
-        android:textSize="18sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/iv_favourite_movie_detail_poster"
-        app:layout_constraintTop_toBottomOf="@+id/tv_favourite_movie_detail_year" />
-
-    <android.support.v7.widget.AppCompatRatingBar
-        android:id="@+id/rb_favourite_movie_detail_rating"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:numStars="10"
-        style="@android:style/Widget.DeviceDefault.Light.RatingBar.Small"
-        android:theme="@style/RatingBarCustomStyle"
-        app:layout_constraintStart_toStartOf="@+id/tv_favourite_movie_detail_name"
-        app:layout_constraintTop_toBottomOf="@+id/tv_favourite_movie_detail_name" />
-
-    <TextView
-        android:id="@+id/tv_favourite_movie_detail_year"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/iv_favourite_movie_detail_poster"
-        app:layout_constraintTop_toBottomOf="@id/youtube_player_favourite_movie_detail_trailer" />
-
-</android.support.constraint.ConstraintLayout>
-</android.support.v7.widget.CardView>
-
-<android.support.v7.widget.CardView
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_marginTop="10dp"
-android:elevation="10dp">
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:paddingEnd="8dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="8dp"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:text="@string/header_synopsis"
-        android:textSize="18sp" />
+        android:orientation="vertical"
+        android:paddingBottom="16dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@android:color/darker_gray" />
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="10dp">
 
-    <TextView
-        android:id="@+id/tv_favourite_movie_detail_synopsis"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="8dp"
-        android:paddingEnd="16dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingStart="16dp"
-        android:paddingTop="8dp"
-        android:textColor="#000000"
-        android:textSize="18sp"
-        tools:text="A grate movie worthy of five stars, greate action, adventure and thriller" />
-</LinearLayout>
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="16dp">
 
-</android.support.v7.widget.CardView>
-</LinearLayout>
+
+                <fragment
+                    android:id="@+id/youtube_player_favourite_movie_detail_trailer"
+                    android:name="com.google.android.youtube.player.YouTubePlayerSupportFragment"
+                    android:layout_width="0dp"
+                    android:layout_height="250dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/iv_favourite_movie_detail_poster"
+                    android:layout_width="150dp"
+                    android:layout_height="200dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="200dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@android:drawable/sym_def_app_icon" />
+
+                <TextView
+                    android:id="@+id/tv_favourite_movie_detail_name"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toEndOf="@+id/iv_favourite_movie_detail_poster"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_favourite_movie_detail_year" />
+
+                <TextView
+                    android:id="@+id/tv_favourite_movie_detail_year"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/iv_favourite_movie_detail_poster"
+                    app:layout_constraintTop_toBottomOf="@id/youtube_player_favourite_movie_detail_trailer" />
+
+                <TextView
+                    android:id="@+id/tv_favourite_movie_detail_genre"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/rb_favourite_movie_detail_rating"
+                    app:layout_constraintTop_toBottomOf="@+id/rb_favourite_movie_detail_rating" />
+
+                <android.support.v7.widget.AppCompatRatingBar
+                    android:id="@+id/rb_favourite_movie_detail_rating"
+                    style="@android:style/Widget.DeviceDefault.Light.RatingBar.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:numStars="10"
+                    android:theme="@style/RatingBarCustomStyle"
+                    app:layout_constraintStart_toStartOf="@+id/tv_favourite_movie_detail_name"
+                    app:layout_constraintTop_toBottomOf="@+id/tv_favourite_movie_detail_name" />
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            app:cardElevation="10dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingEnd="8dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="8dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:text="@string/header_synopsis"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_favourite_movie_detail_synopsis"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="8dp"
+                    android:paddingEnd="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingStart="16dp"
+                    android:paddingTop="8dp"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    tools:text="A grate movie worthy of five stars, greate action, adventure and thriller" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@android:color/darker_gray" />
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+    </LinearLayout>
+</ScrollView>

@@ -81,7 +81,8 @@ public class FavouriteMoviesProvider extends ContentProvider {
                 break;
             default: throw  new UnsupportedOperationException("Unsupported uri " + uri);
         }
-
+        if(result != null)
+            result.setNotificationUri(getContext().getContentResolver(), uri);
         return result;
     }
 
