@@ -144,7 +144,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         bundle.putInt(PAGE_CODE, ++mPageNo);
 
         ConnectivityManager manager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        final NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo();
+        NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo();
 
         if(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())
             getActivity().getSupportLoaderManager().initLoader(mLoaderId, bundle, this);
@@ -170,7 +170,9 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
                     bundle.putInt(PAGE_CODE, ++mPageNo);
                     if(mPageNo > 1000)
                         return;
-                    if(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())
+                    ConnectivityManager manager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                    NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+                    if(networkInfo != null && networkInfo.isConnectedOrConnecting())
                         getActivity().getSupportLoaderManager().restartLoader(mLoaderId, bundle, MoviesListFragment.this);
                 }
             }
