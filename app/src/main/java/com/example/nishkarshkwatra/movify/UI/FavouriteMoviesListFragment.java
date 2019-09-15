@@ -14,6 +14,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,8 @@ import android.widget.ProgressBar;
 import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.adapter.FavouriteMoviesListAdapter;
 import com.example.nishkarshkwatra.movify.data.FavouritesDatabaseContract;
+
+import java.io.File;
 
 public class FavouriteMoviesListFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, FavouriteMoviesListAdapter.onItemClickHandler{
 
@@ -103,7 +106,12 @@ public class FavouriteMoviesListFragment extends Fragment implements LoaderManag
                                 super.onDismissed(transientBottomBar, event);
                                 if(event != DISMISS_EVENT_ACTION)
                                 {
+                                    Cursor result = getActivity().getContentResolver().query(uri, null, null, null, null);
+                                    result.moveToFirst();
                                     getActivity().getContentResolver().delete(uri, selection, selectionArgs);
+                                    Log.d("FMLF", result.getString(result.getColumnIndex(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_POSTER_URI)));
+                                    File file = new File(result.getString(result.getColumnIndex(FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_POSTER_URI)));
+                                    file.delete();
                                 }
                             }
                         });
