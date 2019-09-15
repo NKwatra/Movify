@@ -12,8 +12,11 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.support.v4.view.GestureDetectorCompat;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -48,6 +51,9 @@ public class FavouriteMovieDetailFragment extends Fragment implements YouTubePla
     // constants for loader ids
     public static final int DB_DATA_LOADER_ID = 800;
     public static final int VIDEO_LOADER_ID = 801;
+
+
+    private GestureDetectorCompat mGestureDetector;
 
         // empty constructor
     public FavouriteMovieDetailFragment(){}
@@ -86,9 +92,40 @@ public class FavouriteMovieDetailFragment extends Fragment implements YouTubePla
         mMovieRating = (RatingBar) rootView.findViewById(R.id.rb_favourite_movie_detail_rating);
         mMovieTrailer = (YouTubePlayerSupportFragment) getChildFragmentManager().findFragmentById(R.id.youtube_player_favourite_movie_detail_trailer);
         mMovieGenres = (TextView) rootView.findViewById(R.id.tv_favourite_movie_detail_genre);
+        mGestureDetector = new GestureDetectorCompat(getContext(), new GestureDetector.SimpleOnGestureListener()
+        {
+            @Override
+            public boolean onDown(MotionEvent e) {
+//                Toast.makeText(getContext(), "Down event occured", Toast.LENGTH_LONG).show();
+                return true;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                final int SWIPE_MIN_DISTANCE = 120;
+                final int SWIPE_THRESHOLD_VELOCITY = 200;
+                final int MAX_OFFSET_DISTANCE = 20;
+                if(e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY
+                && e2.getY() - e1.getY() <= MAX_OFFSET_DISTANCE)
+                {
+                   getActivity().onBackPressed();
+                    return true;
+                }
+                return super.onFling(e1,e1,velocityX, velocityY);
+            }
+        });
+
+        rootView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return mGestureDetector.onTouchEvent(event);
+            }
+        });
 
         return rootView;
     }
+
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
