@@ -16,6 +16,7 @@
     <string name="share_menu_title">Share</string>
     <string name="favourite_menu_title">Favourite</string>
     <string name="bookmark_done_text">Added to Favourites</string>
+    <string name="retry_connecting">Please check your internet connection</string>
 
     <!-- strings for favourite movies page -->
     <string name="bookmark_removed_text">Removed from Favourites</string>
@@ -26,5 +27,9 @@
 
     <!-- string resource of activity label -->
     <string name="favourite_activity_label">Favourite Movies</string>
+
+    <!-- string resources for main activity -->
+    <string name="no_internet_message">Can\'t connect to the internet</string>
+    <string name="try_again_button_label">Try Again</string>
 
 </resources>

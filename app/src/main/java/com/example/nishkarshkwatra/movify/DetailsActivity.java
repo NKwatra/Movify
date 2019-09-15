@@ -1,6 +1,7 @@
 package com.example.nishkarshkwatra.movify;
 
 import android.content.Intent;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -58,6 +59,16 @@ public class DetailsActivity extends AppCompatActivity implements MovieDetailsFr
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fl_detail_fragment_container, newMovieFragment)
                 .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void refreshFragment() {
+        MovieDetailsFragment fragment = (MovieDetailsFragment) getSupportFragmentManager().findFragmentById(R.id.fl_detail_fragment_container);
+
+        getSupportFragmentManager().beginTransaction()
+                .detach(fragment)
+                .attach(fragment)
                 .commit();
     }
 

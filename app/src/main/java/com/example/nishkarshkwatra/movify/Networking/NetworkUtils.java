@@ -36,8 +36,6 @@ public class NetworkUtils {
                 .appendQueryParameter(PARAM_PAGE, ""+ pageNo)
                 .build();
 
-        Log.d("Network Utils", sourceUri.toString());
-
         // convert the uri to url
         URL dataUrl = null;
         try {
@@ -66,8 +64,6 @@ public class NetworkUtils {
                 .appendQueryParameter(PARAM_GENRE, "" + genreId)
                 .build();
 
-
-        Log.d("Network Utils", sourceUri.toString());
 
         // convert the uri to url
         URL dataUrl = null;
@@ -106,7 +102,6 @@ public class NetworkUtils {
             e.printStackTrace();
         }finally {
             connection.disconnect();
-            Log.d("Network Utils", response);
             return response;
         }
     }
@@ -136,7 +131,6 @@ public class NetworkUtils {
             e.printStackTrace();
         }finally {
             connection.disconnect();
-            Log.d("Network Utils", response);
             return response;
         }
     }

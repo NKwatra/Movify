@@ -5,6 +5,8 @@ import android.app.DownloadManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -21,9 +23,12 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,10 +75,11 @@ SimilarMoviesListAdapter.onItemClickListener{
     // constant for movie page on TmDb
     public static final String MOVIE_BASE_URL = "https://www.themoviedb.org/movie/";
 
-    // interface to be implemented by parent activity for repalcing fragments
+    // interface to be implemented by parent activity for replacing fragments
     public interface onMovieChangeListener
     {
         void onMovieChange(Movie newMovie);
+        void refreshFragment();
     }
 
     // store reference to onMovieChangeListener
@@ -94,6 +100,8 @@ SimilarMoviesListAdapter.onItemClickListener{
     private ProgressBar mCastLoading;
     private ProgressBar mSimilarLoading;
     private ProgressBar mReviewsLoading;
+    private LinearLayout mNoInternet;
+    private ScrollView mContainer;
 
     // empty constructor for super class
     public MovieDetailsFragment(){}
@@ -141,6 +149,8 @@ SimilarMoviesListAdapter.onItemClickListener{
         mCastLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_cast_loading);
         mSimilarLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_similar_loading);
         mReviewsLoading = (ProgressBar) view.findViewById(R.id.pb_movie_detail_reviews_loading);
+        mNoInternet = (LinearLayout) view.findViewById(R.id.ll_no_connection);
+        mContainer = (ScrollView) view.findViewById(R.id.sv_movie_detail_container);
 
         // fetch values of arguments
        final  Bundle arguments = getArguments();
@@ -241,6 +251,11 @@ SimilarMoviesListAdapter.onItemClickListener{
 
             @Override
             public void onLoadFinished(@NonNull Loader<String> loader, String result) {
+                if(result == null)
+                {
+                    showNoNetwork();
+                    return;
+                }
                  String video = null;
                 try
                 {
@@ -279,10 +294,6 @@ SimilarMoviesListAdapter.onItemClickListener{
             }
         };
 
-        Bundle videoBundle = new Bundle();
-        videoBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/videos");
-        getActivity().getSupportLoaderManager().restartLoader(VIDEO_LOADER_ID, videoBundle, videoCallbacks);
-
         // hook up the cast list recycler view with a layout manager and adapter
         mMovieCast.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         final CastListAdapter castAdapter = new CastListAdapter(MovieDetailsFragment.this);
@@ -302,6 +313,11 @@ SimilarMoviesListAdapter.onItemClickListener{
 
             @Override
             public void onLoadFinished(@NonNull Loader<String> loader, String s) {
+                if(s == null)
+                {
+                    showNoNetwork();
+                    return;
+                }
                 ArrayList<Cast> castList = null;
                 try
                 {
@@ -321,14 +337,6 @@ SimilarMoviesListAdapter.onItemClickListener{
         };
 
 
-        // define bundle to supply to CAST_LOADER
-        Bundle castBundle = new Bundle();
-        castBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/credits");
-
-        // initialize cast holder
-        getActivity().getSupportLoaderManager().restartLoader(CAST_LOADER_ID, castBundle, castCallbacks);
-
-
         // hookup similar movies recycler view with layout manager and adapter
         mMovieSimilar.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
         mMovieSimilar.setHasFixedSize(true);
@@ -345,6 +353,11 @@ SimilarMoviesListAdapter.onItemClickListener{
 
             @Override
             public void onLoadFinished(@NonNull Loader<String> loader, String s) {
+                if(s == null)
+                {
+                    showNoNetwork();
+                    return;
+                }
                 ArrayList<Movie> similarMoviesList = null;
                 try
                 {
@@ -363,14 +376,6 @@ SimilarMoviesListAdapter.onItemClickListener{
             }
         };
 
-        // start loader to load similar movies data
-        Bundle similarMoviesBundle = new Bundle();
-        similarMoviesBundle.putString(MoviesListFragment.PATH_CODE, "movie/"+ mMovieId + "/similar");
-
-        // initialise the loader
-        getActivity().getSupportLoaderManager().restartLoader(SIMILAR_MOVIES_LOADER_ID, similarMoviesBundle, similarMoviesCallback);
-
-
         // hook up reviews recycler view with layout manager and adapter
         mMovieReviews.setLayoutManager(new LinearLayoutManager(getContext()));
         final ReviewListAdapter reviewsListAdapter = new ReviewListAdapter();
@@ -386,6 +391,11 @@ SimilarMoviesListAdapter.onItemClickListener{
 
             @Override
             public void onLoadFinished(@NonNull Loader<String> loader, String s) {
+                if(s == null)
+                {
+                    showNoNetwork();
+                    return;
+                }
                 ArrayList<Review> reviewsList = null;
                 try
                 {
@@ -408,7 +418,52 @@ SimilarMoviesListAdapter.onItemClickListener{
         Bundle reviewBundle = new Bundle();
         reviewBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/reviews");
 
-        getActivity().getSupportLoaderManager().restartLoader(REVIEW_LOADER_ID,reviewBundle, reviewsCallback);
+        Bundle videoBundle = new Bundle();
+        videoBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/videos");
+
+        // define bundle to supply to CAST_LOADER
+        Bundle castBundle = new Bundle();
+        castBundle.putString(MoviesListFragment.PATH_CODE, "movie/" + mMovieId + "/credits");
+
+
+        // start loader to load similar movies data
+        Bundle similarMoviesBundle = new Bundle();
+        similarMoviesBundle.putString(MoviesListFragment.PATH_CODE, "movie/"+ mMovieId + "/similar");
+
+
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+
+        if(activeNetworkInfo !=null && activeNetworkInfo.isConnectedOrConnecting())
+        {
+            mNoInternet.setVisibility(View.GONE);
+            getActivity().getSupportLoaderManager().restartLoader(VIDEO_LOADER_ID, videoBundle, videoCallbacks);
+            // initialize cast loader
+            getActivity().getSupportLoaderManager().restartLoader(CAST_LOADER_ID, castBundle, castCallbacks);
+            // initialise the loader
+            getActivity().getSupportLoaderManager().restartLoader(SIMILAR_MOVIES_LOADER_ID, similarMoviesBundle, similarMoviesCallback);
+            getActivity().getSupportLoaderManager().restartLoader(REVIEW_LOADER_ID,reviewBundle, reviewsCallback);
+        }else
+        {
+           showNoNetwork();
+        }
+    }
+
+    public void showNoNetwork()
+    {
+        mNoInternet.setVisibility(View.VISIBLE);
+        mContainer.setVisibility(View.INVISIBLE);
+        Button tryAgainButton = mNoInternet.findViewById(R.id.try_again_button);
+        tryAgainButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), R.string.retry_connecting, Toast.LENGTH_LONG).show();
+                mMovieChangeListener.refreshFragment();
+            }
+        });
     }
 
     @Override

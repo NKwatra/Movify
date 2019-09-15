@@ -1,7 +1,10 @@
 package com.example.nishkarshkwatra.movify.UI;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -47,6 +50,7 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
     private MovieListAdapter mMovieListAdapter;
     private int mPageNo;
     private int mGenreId = 0;
+    private static boolean activityRestarted = false;
 
     public MoviesListFragment()
     {
@@ -139,7 +143,18 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         Bundle bundle = new Bundle();
         bundle.putInt(PAGE_CODE, ++mPageNo);
 
-        getActivity().getSupportLoaderManager().initLoader(mLoaderId, bundle, this);
+        ConnectivityManager manager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        final NetworkInfo activeNetworkInfo = manager.getActiveNetworkInfo();
+
+        if(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())
+            getActivity().getSupportLoaderManager().initLoader(mLoaderId, bundle, this);
+        else if(!activityRestarted)
+        {
+            activityRestarted = true;
+            Intent intent = getActivity().getIntent();
+            getActivity().finish();
+            startActivity(intent);
+        }
 
 
         // register scroll listener on recycler view and load new data whenever user scrolls to the end
@@ -155,7 +170,8 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
                     bundle.putInt(PAGE_CODE, ++mPageNo);
                     if(mPageNo > 1000)
                         return;
-                    getActivity().getSupportLoaderManager().restartLoader(mLoaderId, bundle, MoviesListFragment.this);
+                    if(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())
+                        getActivity().getSupportLoaderManager().restartLoader(mLoaderId, bundle, MoviesListFragment.this);
                 }
             }
         });
@@ -172,6 +188,13 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
 
     @Override
     public void onLoadFinished(@NonNull Loader<String> loader, String s) {
+        if(s == null)
+        {
+            Intent intent = getActivity().getIntent();
+            getActivity().finish();
+            startActivity(intent);
+            return;
+        }
         ArrayList<Movie> response =null;
         try
         {
@@ -219,4 +242,9 @@ public class MoviesListFragment extends Fragment implements LoaderManager.Loader
         outState.putInt(PAGE_CODE, mPageNo);
     }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        activityRestarted = false;
+    }
 }
