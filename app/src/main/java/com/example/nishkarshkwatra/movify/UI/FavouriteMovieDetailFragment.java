@@ -1,6 +1,9 @@
 package com.example.nishkarshkwatra.movify.UI;
 
+import android.content.Context;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -16,18 +19,27 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.nishkarshkwatra.movify.BuildConfig;
+import com.example.nishkarshkwatra.movify.Networking.MovieDataLoader;
+import com.example.nishkarshkwatra.movify.Networking.NetworkUtils;
 import com.example.nishkarshkwatra.movify.R;
 import com.example.nishkarshkwatra.movify.adapter.GenreListAdapter;
 import com.example.nishkarshkwatra.movify.adapter.MovieListAdapter;
 import com.example.nishkarshkwatra.movify.data.FavouritesDatabaseContract;
+import com.example.nishkarshkwatra.movify.data.JsonUtils;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
 import com.google.android.youtube.player.YouTubePlayerSupportFragment;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
 
 import java.io.File;
 
 
-public class FavouriteMovieDetailFragment extends Fragment {
+public class FavouriteMovieDetailFragment extends Fragment implements YouTubePlayer.PlaybackEventListener {
 
     // keys for arguments of the fragment
     public static final String MOVIE_ID_KEY = "movieId";
@@ -35,6 +47,7 @@ public class FavouriteMovieDetailFragment extends Fragment {
 
     // constants for loader ids
     public static final int DB_DATA_LOADER_ID = 800;
+    public static final int VIDEO_LOADER_ID = 801;
 
         // empty constructor
     public FavouriteMovieDetailFragment(){}
@@ -85,6 +98,7 @@ public class FavouriteMovieDetailFragment extends Fragment {
        final int movieId = args.getInt(MOVIE_ID_KEY);
        final int dbId = args.getInt(DB_ID_KEY);
 
+       // define callback to load movie data
         LoaderManager.LoaderCallbacks<Cursor> movieDataCallbacks = new LoaderManager.LoaderCallbacks<Cursor>() {
             @NonNull
             @Override
@@ -123,6 +137,99 @@ public class FavouriteMovieDetailFragment extends Fragment {
             }
         };
 
+        // define callback to load trailer
+        LoaderManager.LoaderCallbacks<String> videoCallbacks = new LoaderManager.LoaderCallbacks<String>() {
+            @NonNull
+            @Override
+            public Loader<String> onCreateLoader(int loaderId, @Nullable Bundle bundle) {
+                return new MovieDataLoader("movie/" + movieId + "/videos", getContext(), null, 1);
+            }
+
+            @Override
+            public void onLoadFinished(@NonNull Loader<String> loader, String result) {
+                String video = null;
+                try
+                {
+                    video = JsonUtils.getMovieVideo(result);
+                }catch (JSONException e)
+                {
+                    e.printStackTrace();
+                }
+                if(video != null)
+                {
+                    final String videoToBeLoaded = video;
+                    // initialize the youtube player
+                    mMovieTrailer.initialize(BuildConfig.YOUTUBE_API_KEY, new YouTubePlayer.OnInitializedListener() {
+                        @Override
+                        public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                            // set playback event listener on youtube player
+                            youTubePlayer.setPlaybackEventListener(FavouriteMovieDetailFragment.this);
+                            youTubePlayer.cueVideo(videoToBeLoaded);
+                        }
+
+                        @Override
+                        public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+
+                        }
+                    });
+                }else
+                {
+                    Toast.makeText(getContext(), "No trailer available for this movie", Toast.LENGTH_LONG).show();
+                }
+
+            }
+
+            @Override
+            public void onLoaderReset(@NonNull Loader<String> loader) {
+
+            }
+        };
+
+
+        // check if user is connected to network
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+
+
+        // start loading movie data
         getActivity().getSupportLoaderManager().restartLoader(DB_DATA_LOADER_ID, null, movieDataCallbacks);
+
+        if(activeNetworkInfo != null && activeNetworkInfo.isConnectedOrConnecting())
+        {
+            getActivity().getSupportLoaderManager().restartLoader(VIDEO_LOADER_ID, null, videoCallbacks);
+        }else
+        {
+            Toast.makeText(getContext(), "Please connect to internet to load trailer!!!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onPlaying() {
+        // hide movie poster when trailer is playing
+        mMoviePoster.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onPaused() {
+        // show movie poster when video is paused
+        mMoviePoster.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onStopped() {
+        // show movie poster when video is stopped
+        mMoviePoster.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onBuffering(boolean b) {
+        // hide movie poster when trailer is buffering
+        mMoviePoster.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onSeekTo(int i) {
+
     }
 }

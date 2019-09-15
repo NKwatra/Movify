@@ -13,11 +13,13 @@ public class FavouritesActivity extends AppCompatActivity  implements FavouriteM
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favourites);
 
-        // insert the fragment containing favourite movies list into the activity
-        FavouriteMoviesListFragment fragment = FavouriteMoviesListFragment.newInstance(this);
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fl_favourite_movies_list_container, fragment)
-                .commit();
+        if(savedInstanceState == null) {
+            // insert the fragment containing favourite movies list into the activity
+            FavouriteMoviesListFragment fragment = FavouriteMoviesListFragment.newInstance(this);
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fl_favourite_movies_list_container, fragment)
+                    .commit();
+        }
     }
 
     @Override

@@ -92,8 +92,8 @@ public class NetworkUtils {
         {
             // open connection to the url
             connection = (HttpsURLConnection) dataURL.openConnection();
-            connection.setConnectTimeout(3000);
-            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
 
             // get the input stream and extract characters from it
             Scanner scanner = new Scanner(connection.getInputStream());
@@ -122,8 +122,8 @@ public class NetworkUtils {
         {
             // open connection to the url
             connection = (HttpsURLConnection) dataURL.openConnection();
-            connection.setConnectTimeout(3000);
-            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(15000);
+            connection.setReadTimeout(15000);
 
             // get the input stream and extract characters from it
             Scanner scanner = new Scanner(connection.getInputStream());
