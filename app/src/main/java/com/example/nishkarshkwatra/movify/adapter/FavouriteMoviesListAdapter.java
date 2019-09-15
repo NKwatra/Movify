@@ -45,6 +45,7 @@ public class FavouriteMoviesListAdapter extends RecyclerView.Adapter<FavouriteMo
         // data exists in given position in the cursor, then update the data
         if(mFavouritesDataSource.moveToPosition(position))
         {
+            favouriteMovieHolder.itemView.setTag(mFavouritesDataSource.getInt(mFavouritesDataSource.getColumnIndex(FavouritesDatabaseContract.FavouriteEntry._ID)));
             favouriteMovieHolder.mFavouriteMovieTextView.setText(mFavouritesDataSource.getString(2));
         }
     }
@@ -76,6 +77,7 @@ public class FavouriteMoviesListAdapter extends RecyclerView.Adapter<FavouriteMo
                     mOnItemClickHandler.onItemClick(movieId, id);
                 }
             });
+
         }
     }
 
@@ -85,4 +87,5 @@ public class FavouriteMoviesListAdapter extends RecyclerView.Adapter<FavouriteMo
         mFavouritesDataSource = newSource;
         notifyDataSetChanged();
     }
+
 }

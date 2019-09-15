@@ -17,6 +17,10 @@
     <string name="favourite_menu_title">Favourite</string>
     <string name="bookmark_done_text">Added to Favourites</string>
 
+    <!-- strings for favourite movies page -->
+    <string name="bookmark_removed_text">Removed from Favourites</string>
+    <string name="undo_text">UNDO</string>
+
     <!-- string resource for cast details page-->
     <string name="close_button_content_description">A button to close the details of and return back to movie page</string>
 

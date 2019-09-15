@@ -8,7 +8,7 @@ import android.util.Log;
 public class FavouritesDbHelper extends SQLiteOpenHelper {
 
     // define constants for database name and version
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 4;
     public static final String DATABASE_NAME="FavouriteMoviesDb.db";
 
     // constructor
@@ -24,7 +24,7 @@ public class FavouritesDbHelper extends SQLiteOpenHelper {
                 + " ( " + FavouritesDatabaseContract.FavouriteEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_POSTER_URI + " TEXT NOT NULL, " + FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_NAME
                 + " TEXT NOT NULL, " + FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_AVERAGE_RATING + " REAL NOT NULL, " + FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_ID
                 + " INTEGER NOT NULL, " + FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_RELEASE_YEAR + " TEXT NOT NULL, " + FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_SYNOPSIS
-                + " TEXT NOT NULL, " + FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_GENRES + " TEXT NOT NULL );";
+                + " TEXT NOT NULL, " + FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_GENRES + " TEXT NOT NULL, " + FavouritesDatabaseContract.FavouriteEntry.COLUMN_MOVIE_ACTIVE + " INTEGER NOT NULL DEFAULT 1 );";
 
         Log.d("FavouriteDbHeler", CREATE_TABLE_FAVOURITES_COMMAND);
         //create the required tables and database

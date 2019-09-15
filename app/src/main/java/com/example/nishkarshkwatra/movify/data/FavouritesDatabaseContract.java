@@ -33,6 +33,7 @@ public class FavouritesDatabaseContract {
         public static final String COLUMN_MOVIE_AVERAGE_RATING = "rating";
         public static final String COLUMN_MOVIE_SYNOPSIS = "synopsis";
         public static final String COLUMN_MOVIE_GENRES = "genres";
+        public static final String COLUMN_MOVIE_ACTIVE = "isActive";
     }
 
 }

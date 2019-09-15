@@ -136,6 +136,23 @@ public class FavouriteMoviesProvider extends ContentProvider {
 
     @Override
     public int update(Uri uri,   ContentValues values,   String selection,   String[] selectionArgs) {
-        return 0;
+        int match = sUriMatcher.match(uri);
+        SQLiteDatabase db = mFavouriteMovieDbHelper.getWritableDatabase();
+        int numRows = 0;
+        switch (match)
+        {
+            case MOVIE_WITH_ID:
+                numRows = db.update(FavouritesDatabaseContract.FavouriteEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            default: throw  new UnsupportedOperationException("Cannot recognize uri " + uri);
+        }
+
+        if(numRows > 0)
+            return numRows;
+        else
+            throw  new SQLiteException("Failed to update the row " + uri);
     }
 }
