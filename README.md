@@ -10,14 +10,23 @@
 3. Create gradle.properties file in root folder of repository `touch gradle.properties`.
 4. Add below 2 lines to gradle.properties :
 
-    ``` API_KEY = <<your api key >>
+    ``` 
+        API_KEY = <<your api key >>
 
-        YOUTUBE_API_KEY = << your api key >> ```
+        YOUTUBE_API_KEY = << your api key >> 
+    ```
 5. Rebuild the project and run the app.
 
 
-![Home page](./ss/img1.png)      ![Trending Movies](./ss/img2.png)
 
-![Movie Details](./ss/img3.png)      ![Movie Cast](./ss/img4.png)
 
-![Cast Detail](./ss/img5.png)      ![Favourite Movies](./ss/img6.png)
+
+<img align="left" width="auto" height="auto" src="./ss/img1.png" style="margin-top: 80px;" alt="Home screen"/>
+<img align="right" width="auto" height="auto" src="./ss/img2.png" style="margin-top: 80px;" alt="Trending Movies screen"/> 
+
+
+<img align="left" width="auto" height="auto" src="./ss/img3.png" style="margin-top: 80px;" alt="movie details screen"/>
+<img align="right" width="auto" height="auto" src="./ss/img4.png" style="margin-top: 80px;" alt="movie cast screen"/>     
+
+<img align="left" width="auto" height="auto" src="./ss/img5.png" style="margin-top: 80px;" alt="cast details screen"/>
+<img align="right" width="auto" height="auto" src="./ss/img6.png" style="margin-top: 80px;" alt="favourite movies screen"/>
