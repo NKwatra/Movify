@@ -17,6 +17,7 @@
         android:singleLine="true"
         tools:text="Fast and Furious"
         android:textAlignment="center"
+        android:gravity="center_horizontal"
         android:textSize="22sp"
         android:paddingBottom="8dp"
         android:paddingTop="8dp" />
@@ -29,6 +30,7 @@
         android:singleLine="true"
         tools:text="Action, Thriller, Adventure"
         android:textAlignment="center"
+        android:gravity="center_horizontal"
         android:textSize="16sp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"/>

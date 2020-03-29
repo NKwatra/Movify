@@ -84,7 +84,16 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
         // set the movie name and genres for given list item
         movieHolder.mMovieName.setText(currentMovie.getmMovieName());
-        movieHolder.mMovieGenres.setText(Arrays.toString(currentMovie.getmMovieGenres()));
+
+        int[] genres = currentMovie.getmMovieGenres();
+        StringBuffer buf = new StringBuffer();
+        for(int i = 0; i < Math.min(genres.length, 2); i++)
+        {
+            buf.append(GenreListAdapter.idToGenreMapping.get(genres[i]));
+            buf.append(", ");
+        }
+        buf.delete(buf.length() - 2, buf.length());
+        movieHolder.mMovieGenres.setText(buf.toString());
 
         Log.d("MovieListAdapter", this.toString());
     }

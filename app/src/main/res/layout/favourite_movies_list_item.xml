@@ -12,6 +12,7 @@
     android:id="@+id/tv_favourite_movie_list_name"
     android:textSize="20sp"
     android:textAlignment="center"
+    android:gravity="center_horizontal"
     android:textColor="@android:color/black">
 </TextView>
 <View android:layout_width="match_parent"
